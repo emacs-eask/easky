@@ -83,7 +83,7 @@
   "Record error."
   (setq easky--error-message
         (or (ignore-errors (apply #'format arg0 args))  ; Record message when valid
-            t)))                                   ; fallback to t
+            t)))                                        ; fallback to t
 
 (defmacro easky--ignore-env (&rest body)
   "Execute BODY with valid Eask environment."
@@ -99,14 +99,19 @@
   (declare (indent 0) (debug t))
   `(cond
     ((and (not (executable-find "eask")) (not easky-executable))
-     (user-error ""))
+     (user-error
+      (easky--message-concat
+       "No executable named `eask` in the PATH environment, make sure:\n\n"
+       "  [1] You have installed eask-cli and added to your PATH\n"
+       "  [2] You can manually set variable `easky-executable' to point to eask executable\n\n"
+       "For more information, find the manual at https://emacs-eask.github.io/")))
     ((not (easky--valid-project-p))
      (user-error (easky--message-concat
                   "Error execute Easky command, invalid Eask project.\n\n"
                   "  [1] Make sure you have a valid proejct-root\n"
                   "  [2] Make sure you have Eask-file inside your project\n")))
     (t (let* (eask--initialized-p
-              easky--error-message
+              easky--error-message  ; init error message
               (user-emacs-directory (expand-file-name (concat ".eask/" emacs-version "/")))
               (package-user-dir (expand-file-name "elpa" user-emacs-directory))
               (user-init-file (locate-user-emacs-file "init.el"))
