@@ -1,2 +1,2 @@
 # easky
-Control Eask in Emacs
+> Control Eask in Emacs
