@@ -36,6 +36,27 @@
 (require 'eask-api-core)
 (require 'ansi)  ; we need `ansi' to run through Eask API
 
+(defgroup easky nil
+  "Control Eask in Emacs."
+  :prefix "easky-"
+  :group 'tool
+  :link '(url-link :tag "Repository" "https://github.com/emacs-eask/easky"))
+
+(defcustom easky-executable nil
+  "Executable to eask-cli."
+  :type 'string
+  :group 'easky)
+
+;;
+;; (@* "Externals" )
+;;
+
+(declare-function easky-package--setup "easky-package.el")
+
+;;
+;; (@* "Core" )
+;;
+
 (defun easky--message-concat (&rest messages)
   "Concatenate MESSAGES with space."
   (mapconcat #'identity (cl-remove-if #'null messages) " "))
@@ -76,8 +97,15 @@
 (defmacro easky--setup (&rest body)
   "Execute BODY without touching the Eask-file global variables."
   (declare (indent 0) (debug t))
-  `(if (easky--valid-project-p)
-       (let* (eask--initialized-p
+  `(cond
+    ((and (not (executable-find "eask")) (not easky-executable))
+     (user-error ""))
+    ((not (easky--valid-project-p))
+     (user-error (easky--message-concat
+                  "Error execute Easky command, invalid Eask project.\n\n"
+                  "  [1] Make sure you have a valid proejct-root\n"
+                  "  [2] Make sure you have Eask-file inside your project\n")))
+    (t (let* (eask--initialized-p
               easky--error-message
               (user-emacs-directory (expand-file-name (concat ".eask/" emacs-version "/")))
               (package-user-dir (expand-file-name "elpa" user-emacs-directory))
@@ -97,44 +125,149 @@
                "  [2] Make sure your Eask-file doesn't contain any invalid syntax\n\n"
                "Here are useful tools to help you edit Eask-file:\n\n"
                "  | company-eask | Company backend for Eask-file | https://github.com/emacs-eask/company-eask |\n"
-               "  | eldoc-eask   | Eldoc support for Eask-file   | https://github.com/emacs-eask/eldoc-eask   |\n")))))
-     (user-error (easky--message-concat
-                  "Error execute Easky command, invalid Eask project.\n\n"
-                  "  [1] Make sure you have a valid proejct-root\n"
-                  "  [2] Make sure you have Eask-file inside your project\n"))))
+               "  | eldoc-eask   | Eldoc support for Eask-file   | https://github.com/emacs-eask/eldoc-eask   |\n"))))))))
 
-(defun easky-eask-command-async (&rest strings)
-  ""
+(defun easky-command-async (&rest strings)
+  "Execute Eask command asynchronously.
+
+The rest argument STRINGS are concatenate with space between, then send it to
+`shell-command'."
   ;; TODO: ..
   )
 
-(defun easky-eask-command (&rest strings)
+(defun easky-command (&rest strings)
   "Execute Eask command.
 
 The rest argument STRINGS are concatenate with space between, then send it to
 `shell-command'."
-  (let* ((commad (apply #'easky--message-concat strings))
-         (result (shell-command-to-string commad)))
+  (push (or easky-executable "eask") strings)
+  (let* ((command (apply #'easky--message-concat strings))
+         (result (shell-command-to-string command)))
     (string-trim result)))
 
-;;;###autoload
-(defun easky-eask-help ()
-  "Print Eask help manual."
-  (interactive)
-  (message (easky-eask-command "eask" "--help")))
+(defun easky--strip-headers (str)
+  "Strip command headers from STR, and leave only the execution result."
+  (with-temp-buffer
+    (insert str)
+    (goto-char (point-min))
+    (search-forward "Loading Eask file ")
+    (forward-line 1)
+    (string-trim (buffer-substring (point) (point-max)))))
 
 ;;;###autoload
-(defun easky-eask-version ()
+(defun easky-help ()
+  "Print Eask help manual."
+  (interactive)
+  (message (easky-command "--help")))
+
+;;;###autoload
+(defun easky-version ()
   "Print Eask version."
   (interactive)
-  (message "Eask CLI (%s)" (easky-eask-command "eask" "--version")))
+  (message "Eask CLI (%s)" (easky-command "--version")))
+
+;;;###autoload
+(defun easky-locate ()
+  "Print Eask installed location."
+  (interactive)
+  (message (easky-command "locate")))
 
 ;;;###autoload
 (defun easky-info ()
-  "Print Eask-file information."
+  "Print Eask information."
   (interactive)
-  ;; TODO: ..
-  )
+  (message (easky--strip-headers (easky-command "info"))))
+
+;;;###autoload
+(defun easky-compile ()
+  "Clean up .eask directory."
+  (interactive)
+  (message (easky--strip-headers (easky-command "compile"))))
+
+;;;###autoload
+(defun easky-files ()
+  "Print the list of all package files."
+  (interactive)
+  (message (easky--strip-headers (easky-command "files"))))
+
+;;;###autoload
+(defun easky-path ()
+  "Print the PATH (exec-path) from Eask sandbox."
+  (interactive)
+  (message (easky--strip-headers (easky-command "path"))))
+
+;;;###autoload
+(defalias 'easky-exec-path 'easky-path)
+
+;;;###autoload
+(defun easky-load-path ()
+  "Print the load-path from Eask sandbox."
+  (interactive)
+  (message (easky--strip-headers (easky-command "load-path"))))
+
+;;;###autoload
+(defun easky-install-deps ()
+  "Update all packages from Eask sandbox."
+  (interactive)
+  (easky-package--setup
+      (progn
+        (message "Installing %s package dependenc%s..."
+                 (length eask-depends-on)
+                 (eask--sinr eask-depends-on "y" "ies"))
+        (dolist (package eask-depends-on)
+          (package-install (intern (car package)))))
+    (easky-package--revert-info)))
+
+;;;###autoload
+(defun easky-install-deps-dev ()
+  "Update all packages from Eask sandbox."
+  (interactive)
+  (easky-package--setup
+      (progn
+        (message "Installing %s package dependenc%s..."
+                 (length eask-depends-on)
+                 (eask--sinr eask-depends-on "y" "ies"))
+        (dolist (package eask-depends-on)
+          (package-install (intern (car package))))
+        (message "Installing %s development dependenc%s..."
+                 (length eask-depends-on-dev)
+                 (eask--sinr eask-depends-on-dev "y" "ies"))
+        (dolist (package eask-depends-on-dev)
+          (package-install (intern (car package)))))
+    (easky-package--revert-info)))
+
+;;
+;;; Cleaning
+
+;;;###autoload
+(defun easky-clean-workspace ()
+  "Clean up .eask directory."
+  (interactive)
+  (message (easky--strip-headers (easky-command "clean" "workspace"))))
+
+;;;###autoload
+(defalias 'easky-clean-.eask 'easky-clean-workspace)
+
+;;;###autoload
+(defun easky-clean-dist (dest)
+  "Delete dist subdirectory.
+
+Argument DEST is the destination folder, default is set to `dist'."
+  (interactive
+   (list (read-directory-name "Destination: " nil nil nil "dist")))
+  (message (easky--strip-headers (easky-command "clean" "dist" dest))))
+
+;;;###autoload
+(defun easky-clean-elc ()
+  "Remove byte compiled files generated by eask compile."
+  (interactive)
+  (message (easky--strip-headers (easky-command "clean" "elc"))))
+
+;;;###autoload
+(defun easky-clean-all ()
+  "Remove byte compiled files generated by eask compile."
+  (interactive)
+  (message (easky--strip-headers (easky-command "clean" "all"))))
 
 (provide 'easky)
 ;;; easky.el ends here
