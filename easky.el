@@ -103,6 +103,32 @@
                   "  [1] Make sure you have a valid proejct-root\n"
                   "  [2] Make sure you have Eask-file inside your project\n"))))
 
+(defun easky-eask-command-async (&rest strings)
+  ""
+  ;; TODO: ..
+  )
+
+(defun easky-eask-command (&rest strings)
+  "Execute Eask command.
+
+The rest argument STRINGS are concatenate with space between, then send it to
+`shell-command'."
+  (let* ((commad (apply #'easky--message-concat strings))
+         (result (shell-command-to-string commad)))
+    (string-trim result)))
+
+;;;###autoload
+(defun easky-eask-help ()
+  "Print Eask help manual."
+  (interactive)
+  (message (easky-eask-command "eask" "--help")))
+
+;;;###autoload
+(defun easky-eask-version ()
+  "Print Eask version."
+  (interactive)
+  (message "Eask CLI (%s)" (easky-eask-command "eask" "--version")))
+
 ;;;###autoload
 (defun easky-info ()
   "Print Eask-file information."

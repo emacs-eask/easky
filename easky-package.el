@@ -29,7 +29,9 @@
 (require 'easky)
 
 (defmacro easky-package--setup (body &rest unwind)
-  "Execute BODY without touching the Eask-file global variables."
+  "Execute BODY without touching the Eask-file global variables.
+
+The form UNWIND is use to revert package information."
   (declare (indent 1) (debug t))
   `(unwind-protect (easky--setup (package-initialize t) ,body) ,@unwind))
 
@@ -59,26 +61,66 @@
 
 ;;;###autoload
 (defun easky-package-install ()
-  "Install package in Eask sandbox."
+  "Install a package to Eask sandbox."
   (interactive)
   (easky-package--setup
       (call-interactively #'package-install)
     (easky-package--revert-info)))
 
 ;;;###autoload
+(defun easky-package-delete ()
+  "Delete a package from Eask sandbox."
+  (interactive)
+  (easky-package--setup
+      (call-interactively #'package-delete)
+    (easky-package--revert-info)))
+
+;;;###autoload
 (defun easky-package-reinstall ()
-  "Reinstall package in Eask sandbox."
+  "Reinstall a package in Eask sandbox."
   (interactive)
   (easky-package--setup
       (call-interactively #'package-reinstall)
     (easky-package--revert-info)))
 
 ;;;###autoload
-(defun easky-package-delete ()
-  "Delete package in Eask sandbox."
+(defun easky-package-recompile ()
+  "Recompile a package in Eask sandbox."
   (interactive)
   (easky-package--setup
-      (call-interactively #'package-delete)
+      (call-interactively #'package-recompile)
+    (easky-package--revert-info)))
+
+;;;###autoload
+(defun easky-package-recompile-all ()
+  "Recompile all packages in Eask sandbox."
+  (interactive)
+  (easky-package--setup
+      (call-interactively #'package-recompile-all)
+    (easky-package--revert-info)))
+
+;;;###autoload
+(defun easky-describe-package ()
+  "Describe a package from Eask source."
+  (interactive)
+  (easky-package--setup
+      (call-interactively #'describe-package)
+    (easky-package--revert-info)))
+
+;;;###autoload
+(defun easky-package-update ()
+  "Update a package from Eask sandbox."
+  (interactive)
+  (easky-package--setup
+      (call-interactively #'package-update)
+    (easky-package--revert-info)))
+
+;;;###autoload
+(defun easky-package-update-all ()
+  "Update all packages from Eask sandbox."
+  (interactive)
+  (easky-package--setup
+      (call-interactively #'package-update-all)
     (easky-package--revert-info)))
 
 (provide 'easky-package)
