@@ -6,7 +6,7 @@
 ;; Maintainer: Shen, Jen-Chieh <jcs090218@gmail.com>
 ;; URL: https://github.com/emacs-eask/easky
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "26.1"))
+;; Package-Requires: ((emacs "26.1") (eask-api "0.1.0") (ansi "0.4.1"))
 ;; Keywords: lisp easky
 
 ;; This file is not part of GNU Emacs.
@@ -31,6 +31,7 @@
 
 ;;; Code:
 
+(require 'ansi)
 (require 'eask-api-core)
 
 (defmacro easky--setup (&rest body)
@@ -48,6 +49,13 @@
            (eask--silent (eask-file-try-load default-directory))
            ,@body))
      (user-error "Error execute Easky command, invalid Eask project")))
+
+;;;###autoload
+(defun easky-info ()
+  "Print Eask-file information."
+  (interactive)
+  ;; TODO: ..
+  )
 
 (provide 'easky)
 ;;; easky.el ends here

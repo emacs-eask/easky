@@ -19,10 +19,12 @@
 
 ;;; Commentary:
 ;;
-;;
+;; This module simulate most important functionality from `package.el'
 ;;
 
 ;;; Code:
+
+(require 'package)
 
 (require 'easky)
 
@@ -57,7 +59,7 @@
 
 ;;;###autoload
 (defun easky-package-install ()
-  "List packages."
+  "Install package in Eask sandbox."
   (interactive)
   (easky-package--setup
       (call-interactively #'package-install)
@@ -65,10 +67,18 @@
 
 ;;;###autoload
 (defun easky-package-reinstall ()
-  "List packages."
+  "Reinstall package in Eask sandbox."
   (interactive)
   (easky-package--setup
       (call-interactively #'package-reinstall)
+    (easky-package--revert-info)))
+
+;;;###autoload
+(defun easky-package-delete ()
+  "Delete package in Eask sandbox."
+  (interactive)
+  (easky-package--setup
+      (call-interactively #'package-delete)
     (easky-package--revert-info)))
 
 (provide 'easky-package)
