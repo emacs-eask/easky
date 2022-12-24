@@ -29,22 +29,28 @@
 (defmacro easky-package--setup (body &rest unwind)
   "Execute BODY without touching the Eask-file global variables."
   (declare (indent 1) (debug t))
-  `(unwind-protect (easky--setup ,body) ,@unwind))
+  `(unwind-protect (easky--setup (package-initialize t) ,body) ,@unwind))
 
-(defun easky--revert-package-info (&rest _)
+(defun easky-package--revert-info (&rest _)
   "Revert package inforamtion after we have displayed in Package Menu."
-  ;; Revert package information!
   (package-initialize t))
+
+;;;###autoload
+(defun easky-package-refresh-contents ()
+  "Like command `package-refresh-contents' but in Eask sandbox."
+  (interactive)
+  (easky-package--setup
+      (call-interactively #'package-refresh-contents)
+    (easky-package--revert-info)))
 
 ;;;###autoload
 (defun easky-list-packages ()
   "List packages."
   (interactive)
   (easky-package--setup
-      (progn
-        (package-initialize t)
-        (package-list-packages t))
-    (add-hook 'package-menu-mode-hook #'easky--revert-package-info)))
+      (package-list-packages t)
+    ;; XXX: We revert information after it's done displaying!
+    (add-hook 'package-menu-mode-hook #'easky-package--revert-info)))
 
 ;;;###autoload
 (defalias 'easky-package-list-packages 'easky-list-packages)
@@ -54,20 +60,16 @@
   "List packages."
   (interactive)
   (easky-package--setup
-      (progn
-        (package-initialize t)
-        (call-interactively #'package-install))
-    (easky--revert-package-info)))
+      (call-interactively #'package-install)
+    (easky-package--revert-info)))
 
 ;;;###autoload
 (defun easky-package-reinstall ()
   "List packages."
   (interactive)
   (easky-package--setup
-      (progn
-        (package-initialize t)
-        (call-interactively #'package-reinstall))
-    (easky--revert-package-info)))
+      (call-interactively #'package-reinstall)
+    (easky-package--revert-info)))
 
 (provide 'easky-package)
 ;;; easky-package.el ends here

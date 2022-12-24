@@ -43,8 +43,9 @@
               (user-init-file (locate-user-emacs-file "init.el"))
               (custom-file (locate-user-emacs-file "custom.el"))
               (package-activated-list))
+         ;; This will maintain your Eask-file information!
          (eask--save-eask-file-state
-           (msgu-silent (eask-file-try-load default-directory))
+           (eask--silent (eask-file-try-load default-directory))
            ,@body))
      (user-error "Error execute Easky command, invalid Eask project")))
 
