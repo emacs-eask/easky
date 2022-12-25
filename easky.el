@@ -182,16 +182,16 @@ The rest argument STRINGS are concatenate with space between, then send it to
   (message "Eask CLI (%s)" (easky-command "--version")))
 
 ;;;###autoload
-(defun easky-locate ()
-  "Print Eask installed location."
-  (interactive)
-  (message (easky-command "locate")))
-
-;;;###autoload
 (defun easky-info ()
   "Print Eask information."
   (interactive)
   (message (easky--strip-headers (easky-command "info"))))
+
+;;;###autoload
+(defun easky-locate ()
+  "Print Eask installed location."
+  (interactive)
+  (message (easky-command "locate")))
 
 ;;;###autoload
 (defun easky-compile ()
@@ -271,8 +271,9 @@ The rest argument STRINGS are concatenate with space between, then send it to
                        package-name version description website keywords
                        entry-point emacs-version)))
         (lv-message content)
-        (when (yes-or-no-p "Is this Okay? ")
-          (write-region content nil new-name))
+        (if (yes-or-no-p "Is this Okay? ")
+            (write-region content nil new-name)
+          (message "Operation aborted"))
         (lv-delete-window)))))
 
 ;;
