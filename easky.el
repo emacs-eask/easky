@@ -33,6 +33,7 @@
 
 (require 'cl-lib)
 
+(require 'eask-api)
 (require 'eask-api-core)
 (require 'ansi)  ; we need `ansi' to run through Eask API
 (require 'lv)
