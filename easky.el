@@ -56,6 +56,11 @@
   :type 'function
   :group 'easky)
 
+(defcustom easky-lv-focus-p nil
+  "Select lv's window after command execution."
+  :type 'boolean
+  :group 'easky)
+
 ;;
 ;; (@* "Externals" )
 ;;
@@ -151,17 +156,30 @@ We use number to name our arguments, ARG0 and ARGS."
 (defmacro easky--display (str)
   "Show STR with default method."
   (declare (indent 0) (debug t))
-  `(progn
-     (add-hook 'pre-command-hook #'easky--pre-command-once)
-     (easky--setup (funcall easky-display-function ,str))))
+  `(let ((lv-p (equal easky-display-function #'lv-message)))
+     (when lv-p
+       ;; XXX: This is only for lv-message!
+       (add-hook 'pre-command-hook #'easky--pre-command-once))
+     (easky--setup (funcall easky-display-function ,str))
+     (when (and lv-p easky-lv-focus-p)
+       (select-window lv-wnd))))
 
 ;;
-;;; Pre-command
+;;; Pre-command / Post-command
 
 (defun easky--pre-command-once (&rest _)
   "One time pre-command after Easky command."
+  ;; XXX: We pass on to next post-command!
   (remove-hook 'pre-command-hook #'easky--pre-command-once)
-  (lv-delete-window))
+  (add-hook 'post-command-hook #'easky--post-command-once))
+
+(defun easky--post-command-once (&rest _)
+  "One time post-command after Easky command."
+  ;; XXX: This will allow us to scroll in the lv's window!
+  (unless (equal lv-wnd (ignore-errors (selected-window)))
+    ;; Once we select window other than lv's window, then we kill it!
+    (remove-hook 'post-command-hook #'easky--post-command-once)
+    (lv-delete-window)))
 
 ;;
 ;;; Core
@@ -359,6 +377,12 @@ The rest argument STRINGS are concatenate with space between, then send it to
 
 ;;;###autoload
 (defalias 'easky-run-script 'easky-run)
+
+;;;###autoload
+(defun easky-package ()
+  "Package your package to dist folder."
+  (interactive)
+  (easky--display (easky--strip-headers (easky-command "package"))))
 
 ;;
 ;;; Install
