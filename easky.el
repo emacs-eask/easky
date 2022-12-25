@@ -36,6 +36,8 @@
 (require 'eask-api-core)
 (require 'ansi)  ; we need `ansi' to run through Eask API
 
+(require 'easky-package)
+
 (defgroup easky nil
   "Control Eask in Emacs."
   :prefix "easky-"
@@ -51,6 +53,7 @@
 ;; (@* "Externals" )
 ;;
 
+(defvar eask-api-strict-p)
 (declare-function easky-package--setup "easky-package.el")
 
 ;;

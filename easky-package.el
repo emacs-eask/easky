@@ -26,7 +26,15 @@
 
 (require 'package)
 
-(require 'easky)
+;;
+;; (@* "Externals" )
+;;
+
+(declare-function easky--setup "easky.el")
+
+;;
+;; (@* "Core" )
+;;
 
 (defmacro easky-package--setup (body &rest unwind)
   "Execute BODY without touching the Eask-file global variables.
