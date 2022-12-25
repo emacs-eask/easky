@@ -51,11 +51,17 @@
   :type 'string
   :group 'easky)
 
+(defcustom easky-display-function #'lv-message
+  "Function to display Easky's result."
+  :type 'function
+  :group 'easky)
+
 ;;
 ;; (@* "Externals" )
 ;;
 
 (defvar eask-api-strict-p)
+
 (declare-function easky-package--setup "easky-package.el")
 
 ;;
@@ -142,13 +148,23 @@ We use number to name our arguments, ARG0 and ARGS."
                "  | company-eask | Company backend for Eask-file | https://github.com/emacs-eask/company-eask |\n"
                "  | eldoc-eask   | Eldoc support for Eask-file   | https://github.com/emacs-eask/eldoc-eask   |\n"))))))))
 
-(defun easky-command-async (&rest strings)
-  "Execute Eask command asynchronously.
+(defmacro easky--display (str)
+  "Show STR with default method."
+  (declare (indent 0) (debug t))
+  `(progn
+     (add-hook 'pre-command-hook #'easky--pre-command-once)
+     (easky--setup (funcall easky-display-function ,str))))
 
-The rest argument STRINGS are concatenate with space between, then send it to
-`shell-command'."
-  ;; TODO: ..
-  )
+;;
+;;; Pre-command
+
+(defun easky--pre-command-once (&rest _)
+  "One time pre-command after Easky command."
+  (remove-hook 'pre-command-hook #'easky--pre-command-once)
+  (lv-delete-window))
+
+;;
+;;; Core
 
 (defun easky-command (&rest strings)
   "Execute Eask command.
@@ -173,7 +189,7 @@ The rest argument STRINGS are concatenate with space between, then send it to
 (defun easky-help ()
   "Print Eask help manual."
   (interactive)
-  (message (easky-command "--help")))
+  (easky--display (easky-command "--help")))
 
 ;;;###autoload
 (defun easky-version ()
@@ -185,7 +201,7 @@ The rest argument STRINGS are concatenate with space between, then send it to
 (defun easky-info ()
   "Print Eask information."
   (interactive)
-  (message (easky--strip-headers (easky-command "info"))))
+  (easky--display (easky--strip-headers (easky-command "info"))))
 
 ;;;###autoload
 (defun easky-locate ()
@@ -197,19 +213,60 @@ The rest argument STRINGS are concatenate with space between, then send it to
 (defun easky-compile ()
   "Clean up .eask directory."
   (interactive)
-  (message (easky--strip-headers (easky-command "compile"))))
+  (easky--display (easky--strip-headers (easky-command "compile"))))
 
 ;;;###autoload
 (defun easky-files ()
   "Print the list of all package files."
   (interactive)
-  (message (easky--strip-headers (easky-command "files"))))
+  (easky--display (easky--strip-headers (easky-command "files"))))
+
+;;;###autoload
+(defun easky-archives ()
+  "Print used archives, and all available ones."
+  (interactive)
+  (easky--display
+    (with-temp-buffer
+      (insert "Archives in used:\n\n")
+      (if package-archives
+          (let ((max-name-len (eask-seq-str-max (mapcar #'car package-archives)))
+                (max-url-len (eask-seq-str-max (mapcar #'cdr package-archives))))
+            (dolist (archive package-archives)
+              (insert "  "
+                      (format (concat "%-" (eask-2str max-name-len) "s")
+                              (car archive))
+                      "  "
+                      (format (concat "%-" (eask-2str max-url-len) "s")
+                              (cdr archive))
+                      "  "
+                      (or (cdr (assoc (car archive) package-archive-priorities))
+                          "0")
+                      "\n")))
+        (insert "N/A"))
+      (insert "\n")
+      (insert "Available archives:\n\n")
+      (if eask-source-mapping
+          (let ((max-name-len (eask-seq-str-max (mapcar #'car eask-source-mapping)))
+                (max-url-len (eask-seq-str-max (mapcar #'cdr eask-source-mapping))))
+            (dolist (archive eask-source-mapping)
+              (insert "  "
+                      (format (concat "%-" (eask-2str max-name-len) "s")
+                              (car archive))
+                      "  "
+                      (format (concat "%-" (eask-2str max-url-len) "s")
+                              (cdr archive))
+                      "  "
+                      (or (cdr (assoc (car archive) package-archive-priorities))
+                          "0")
+                      "\n")))
+        (insert "N/A"))
+      (buffer-string))))
 
 ;;;###autoload
 (defun easky-path ()
   "Print the PATH (exec-path) from Eask sandbox."
   (interactive)
-  (message (easky--strip-headers (easky-command "path"))))
+  (easky--display (easky--strip-headers (easky-command "path"))))
 
 ;;;###autoload
 (defalias 'easky-exec-path 'easky-path)
@@ -218,7 +275,7 @@ The rest argument STRINGS are concatenate with space between, then send it to
 (defun easky-load-path ()
   "Print the `load-path' from Eask sandbox."
   (interactive)
-  (message (easky--strip-headers (easky-command "load-path"))))
+  (easky--display (easky--strip-headers (easky-command "load-path"))))
 
 ;;;###autoload
 (defun easky-init (dir)
@@ -275,6 +332,34 @@ The rest argument STRINGS are concatenate with space between, then send it to
           (write-region content nil new-name))
         (lv-delete-window)))))
 
+;;;###autoload
+(defun easky-run ()
+  "Execute Eask's script."
+  (interactive)
+  (easky--setup
+    (if eask-scripts
+        (let* ((max-len (eask-seq-str-max (mapcar #'cdr eask-scripts)))
+               (selected-script
+                (completing-read
+                 "Run Eask's script: "
+                 (lambda (string predicate action)
+                   (if (eq action 'metadata)
+                       `(metadata
+                         (annotation-function
+                          . ,(lambda (cand)
+                               (concat (propertize " " 'display `((space :align-to (- right ,max-len))))
+                                       (cdr (assoc cand eask-scripts))))))
+                     (complete-with-action action eask-scripts string predicate)))
+                 nil t)))
+          (message (easky--strip-headers (easky-command "run" selected-script))))
+      (message (easky--message-concat
+                "Not finding any script to run, you can add one by adding the line below to your Eask-file:\n\n"
+                "  (script \"test\" \"echo Hi!~\")"
+                "\n\nThen re-run this command once again!")))))
+
+;;;###autoload
+(defalias 'easky-run-script 'easky-run)
+
 ;;
 ;;; Install
 
@@ -316,7 +401,7 @@ The rest argument STRINGS are concatenate with space between, then send it to
 (defun easky-clean-workspace ()
   "Clean up .eask directory."
   (interactive)
-  (message (easky--strip-headers (easky-command "clean" "workspace"))))
+  (easky--display (easky--strip-headers (easky-command "clean" "workspace"))))
 
 ;;;###autoload
 (defalias 'easky-clean-.eask 'easky-clean-workspace)
@@ -328,19 +413,19 @@ The rest argument STRINGS are concatenate with space between, then send it to
 Argument DEST is the destination folder, default is set to `dist'."
   (interactive
    (list (read-directory-name "Destination: " nil nil nil "dist")))
-  (message (easky--strip-headers (easky-command "clean" "dist" dest))))
+  (easky--display (easky--strip-headers (easky-command "clean" "dist" dest))))
 
 ;;;###autoload
 (defun easky-clean-elc ()
   "Remove byte compiled files generated by eask compile."
   (interactive)
-  (message (easky--strip-headers (easky-command "clean" "elc"))))
+  (easky--display (easky--strip-headers (easky-command "clean" "elc"))))
 
 ;;;###autoload
 (defun easky-clean-all ()
   "Remove byte compiled files generated by eask compile."
   (interactive)
-  (message (easky--strip-headers (easky-command "clean" "all"))))
+  (easky--display (easky--strip-headers (easky-command "clean" "all"))))
 
 (provide 'easky)
 ;;; easky.el ends here
