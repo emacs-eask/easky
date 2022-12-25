@@ -6,7 +6,7 @@
 ;; Maintainer: Shen, Jen-Chieh <jcs090218@gmail.com>
 ;; URL: https://github.com/emacs-eask/easky
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "26.1") (eask-api "0.1.0") (ansi "0.4.1"))
+;; Package-Requires: ((emacs "26.1") (eask-api "0.1.0") (ansi "0.4.1") (lv "0.0"))
 ;; Keywords: lisp easky
 
 ;; This file is not part of GNU Emacs.
@@ -35,6 +35,7 @@
 
 (require 'eask-api-core)
 (require 'ansi)  ; we need `ansi' to run through Eask API
+(require 'lv)
 
 (require 'easky-package)
 
@@ -75,15 +76,17 @@
 
 (defconst easky-ignore-functions
   '( eask-debug eask-log eask-info eask-warn eask-error)
-  "List of functions that we wish to enabled since")
+  "List of functions that we wish to enabled since.")
 
 (defun easky-load-eask (&optional path)
   "Load Eask-file from PATH."
   (eask--silent (eask-file-try-load (or path default-directory)))
   eask-file)
 
-(defun eask--ignore-error (&optional arg0 &rest args)
-  "Record error."
+(defun easky--ignore-error (&optional arg0 &rest args)
+  "Record error.
+
+We use number to name our arguments, ARG0 and ARGS."
   (setq easky--error-message
         (or (ignore-errors (apply #'format arg0 args))  ; Record message when valid
             t)))                                        ; fallback to t
@@ -93,14 +96,15 @@
   (declare (indent 0) (debug t))
   ;; This will maintain your Eask-file information!
   `(eask--save-eask-file-state
-     (dolist (func easky-ignore-functions) (advice-add func :override #'eask--ignore-error))
+     (dolist (func easky-ignore-functions) (advice-add func :override #'easky--ignore-error))
      ,@body
-     (dolist (func easky-ignore-functions) (advice-remove func #'eask--ignore-error))))
+     (dolist (func easky-ignore-functions) (advice-remove func #'easky--ignore-error))))
 
 (defmacro easky--setup (&rest body)
   "Execute BODY without touching the Eask-file global variables."
   (declare (indent 0) (debug t))
   `(cond
+    ;; Executable not found!
     ((and (not (executable-find "eask")) (not easky-executable))
      (user-error
       (easky--message-concat
@@ -108,11 +112,13 @@
        "  [1] You have installed eask-cli and added to your PATH\n"
        "  [2] You can manually set variable `easky-executable' to point to eask executable\n\n"
        "For more information, find the manual at https://emacs-eask.github.io/")))
+    ;; Invalid Eask Project!
     ((not (easky--valid-project-p))
      (user-error (easky--message-concat
                   "Error execute Easky command, invalid Eask project.\n\n"
                   "  [1] Make sure you have a valid proejct-root\n"
                   "  [2] Make sure you have Eask-file inside your project\n")))
+    ;; Okay! Good to go!
     (t (let* (eask--initialized-p
               easky--error-message  ; init error message
               (user-emacs-directory (expand-file-name (concat ".eask/" emacs-version "/")))
@@ -121,8 +127,8 @@
               (custom-file (locate-user-emacs-file "custom.el"))
               (package-activated-list))
          (easky--ignore-env
-           (if (and (ignore-errors (easky-load-eask))
-                    (not easky--error-message))
+           (if (and (ignore-errors (easky-load-eask))  ; Error loading Eask file!
+                    (not easky--error-message))        ; The message is stored here!
                (progn ,@body)
              (user-error
               (easky--message-concat
@@ -209,9 +215,67 @@ The rest argument STRINGS are concatenate with space between, then send it to
 
 ;;;###autoload
 (defun easky-load-path ()
-  "Print the load-path from Eask sandbox."
+  "Print the `load-path' from Eask sandbox."
   (interactive)
   (message (easky--strip-headers (easky-command "load-path"))))
+
+;;;###autoload
+(defun easky-init (dir)
+  "Initialize Eask-file in DIR."
+  (interactive
+   (list (read-directory-name "Where you want to place your Eask-file: ")))
+  (let* ((eask-api-strict-p)  ; disable strict
+         (files (eask-api-files dir))
+         (continue
+          (or (not files)
+              (y-or-n-p
+               (easky--message-concat
+                "Eask-file already exist,\n\n  "
+                (mapconcat #'identity files "\n   ")
+                "\n\nContinue the initialization? "))))
+         (new-name "Eask"))
+    (when continue
+      (when files
+        (setq new-name (read-file-name "New Eask-file name: " dir nil nil "Eask")))
+      (when (file-exists-p new-name)
+        (user-error "File already exists, operation aborted"))
+      (let* ((project-name (file-name-nondirectory (directory-file-name default-directory)))
+             (package-name (read-string (format "package name: (%s) " project-name) nil nil project-name))
+             (version (read-string "version: (1.0.0) " nil nil "1.0.0"))
+             (description (read-string "description: "))
+             (guess-entry-point (format "%s.el" project-name))
+             (entry-point (read-string (format "entry point: (%s) " guess-entry-point)
+                                       nil nil guess-entry-point))
+             (emacs-version (read-string "emacs version: (26.1) " nil nil "26.1"))
+             (website (read-string "website: "))
+             (keywords (read-string "keywords: "))
+             (keywords (split-string keywords "[, ]"))
+             (keywords (string-join keywords "\" \""))
+             (content (format
+                       "(package \"%s\"
+         \"%s\"
+         \"%s\")
+
+(website-url \"%s\")
+(keywords \"%s\")
+
+(package-file \"%s\")
+
+(script \"test\" \"echo \\\"Error: no test specified\\\" && exit 1\")
+
+(source \"gnu\")
+
+(depends-on \"emacs\" \"%s\")
+"
+                       package-name version description website keywords
+                       entry-point emacs-version)))
+        (lv-message content)
+        (when (yes-or-no-p "Is this Okay? ")
+          (write-region content nil new-name))
+        (lv-delete-window)))))
+
+;;
+;;; Install
 
 ;;;###autoload
 (defun easky-install-deps ()
