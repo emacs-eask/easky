@@ -271,9 +271,8 @@ The rest argument STRINGS are concatenate with space between, then send it to
                        package-name version description website keywords
                        entry-point emacs-version)))
         (lv-message content)
-        (if (yes-or-no-p "Is this Okay? ")
-            (write-region content nil new-name)
-          (message "Operation aborted"))
+        (when (yes-or-no-p (format "About to write to %s:\n\nIs this Okay? " new-name))
+          (write-region content nil new-name))
         (lv-delete-window)))))
 
 ;;
