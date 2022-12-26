@@ -67,8 +67,15 @@
   :type 'boolean
   :group 'easky)
 
+(defcustom easky-timeout-seconds 30
+  "Timeout seconds for running too long process."
+  :type 'number
+  :group 'easky)
+
 (defconst easky-buffer-name "*easky*"
   "Buffer name for process file.")
+
+(defvar easky--timeout-timer nil)
 
 ;;
 ;; (@* "Externals" )
@@ -228,7 +235,21 @@ We use number to name our arguments, ARG0 and ARGS."
                (process (start-file-process-shell-command proc-name (current-buffer) cmd)))
           (set-process-filter process #'easky--default-filter)
           (set-process-sentinel process #'easky--default-sentinel)
-          (setq easky-process process))))))
+          (setq easky-process process)
+          ;; Set timeout!
+          (when (timerp easky--timeout-timer)
+            (cancel-timer easky--timeout-timer))
+          (setq easky--timeout-timer (run-with-timer easky-timeout-seconds
+                                                     nil #'easky--kill-process)))))))
+
+(defun easky--kill-process ()
+  "Kill process."
+  (when (and easky-process (eq (process-status easky-process) 'run))
+    (message "Easky process timed out, %s (running over %s seconds)"
+             (process-name easky-process)
+             easky-timeout-seconds)
+    (kill-process easky-process)
+    (setq easky-process nil)))
 
 (defun easky-lv-message-p ()
   "Return t if using lv to display message."
@@ -613,6 +634,8 @@ Argument DEST is the destination folder, default is set to `dist'."
 
 ;;
 ;;; Testing
+
+;; TODO: ..
 
 (provide 'easky)
 ;;; easky.el ends here
