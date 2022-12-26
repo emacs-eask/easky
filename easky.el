@@ -31,6 +31,7 @@
 
 ;;; Code:
 
+(require 'ansi-color)
 (require 'cl-lib)
 
 (require 'eask-api)
@@ -60,6 +61,9 @@
   "Select lv's window after command execution."
   :type 'boolean
   :group 'easky)
+
+(defconst easky-buffer-name "*easky*"
+  "Buffer name for process file.")
 
 ;;
 ;; (@* "Externals" )
@@ -153,19 +157,81 @@ We use number to name our arguments, ARG0 and ARGS."
                "  | company-eask | Company backend for Eask-file | https://github.com/emacs-eask/company-eask |\n"
                "  | eldoc-eask   | Eldoc support for Eask-file   | https://github.com/emacs-eask/eldoc-eask   |\n"))))))))
 
-(defmacro easky--display (str)
-  "Show STR with default method."
+;;
+;; (@* "Display" )
+;;
+
+(defvar easky-process nil
+  "Singleton process.")
+
+(defun easky--strip-headers (str)
+  "Strip command headers from STR, and leave only the execution result."
+  (with-temp-buffer
+    (insert str)
+    (goto-char (point-min))
+    (when (search-forward "Loading Eask file " nil t)
+      (forward-line 1))
+    (let ((content (string-trim (buffer-substring (point) (point-max)))))
+      (if (string-empty-p content)
+          (buffer-string)  ; try to print something, don't let the user left unknown
+        content))))
+
+(defun easky--default-filter (proc output)
+  "Default filter for PROC's OUTPUT."
+  (with-current-buffer (process-buffer proc)
+    (goto-char (point-max))
+    (let ((inhibit-read-only t)
+          (start (point)))
+      (insert output)
+      ;; TODO: Apply color not working...
+      (ansi-color-apply-on-region start (point))
+      (funcall easky-display-function (easky--strip-headers (buffer-string))))))
+
+(defun easky--default-sentinel (process &optional _event)
+  "Default sentinel for PROCESS."
+  (when (memq (process-status process) '(exit signal))
+    (delete-process process)
+    (setq easky-process nil)
+    ;; XXX: This is only for lv-message!
+    (when (easky-lv-message-p)
+      (add-hook 'pre-command-hook #'easky--pre-command-once)
+      (when easky-lv-focus-p
+        (select-window lv-wnd)))))
+
+(defun easky--output-buffer (cmd)
+  "Output CMD to buffer."
+  (when (and easky-process
+             (yes-or-no-p "Easky is still busy, kill it anyway? "))
+    (delete-process easky-process)
+    (setq easky-process nil))
+  ;; XXX: Make sure we only have one process running!
+  (unless easky-process
+    (let ((prev-dir default-directory))
+      (with-current-buffer (get-buffer-create easky-buffer-name)
+        (setq default-directory prev-dir)  ; hold `default-directory'
+        (read-only-mode 1)
+        (let ((inhibit-read-only t))
+          (erase-buffer)
+          (goto-char (point-min)))
+        (let* ((program (car (split-string cmd)))
+               (proc-name (format "easky-process-%s" program))
+               (process (start-file-process-shell-command proc-name (current-buffer) cmd)))
+          (set-process-filter process #'easky--default-filter)
+          (set-process-sentinel process #'easky--default-sentinel)
+          (setq easky-process process))))))
+
+(defun easky-lv-message-p ()
+  "Return t if using lv to display message."
+  (equal easky-display-function #'lv-message))
+
+(defmacro easky--display (cmd)
+  "Display CMD output."
   (declare (indent 0) (debug t))
-  `(let ((lv-p (equal easky-display-function #'lv-message)))
-     (when lv-p
-       ;; XXX: This is only for lv-message!
-       (add-hook 'pre-command-hook #'easky--pre-command-once))
-     (easky--setup (funcall easky-display-function ,str))
-     (when (and lv-p easky-lv-focus-p)
-       (select-window lv-wnd))))
+  `(easky--setup (easky--output-buffer ,cmd)))
 
 ;;
-;;; Pre-command / Post-command
+;; (@* "Pre-command / Post-command" )
+;;
 
 (defun easky--pre-command-once (&rest _)
   "One time pre-command after Easky command."
@@ -182,26 +248,15 @@ We use number to name our arguments, ARG0 and ARGS."
     (lv-delete-window)))
 
 ;;
-;;; Core
+;; (@* "Commands" )
+;;
 
-(defun easky-command (&rest strings)
-  "Execute Eask command.
+(defun easky-command (&rest args)
+  "Form command string.
 
-The rest argument STRINGS are concatenate with space between, then send it to
-`shell-command'."
-  (push (or easky-executable "eask") strings)
-  (let* ((command (apply #'easky--message-concat strings))
-         (result (shell-command-to-string command)))
-    (string-trim result)))
-
-(defun easky--strip-headers (str)
-  "Strip command headers from STR, and leave only the execution result."
-  (with-temp-buffer
-    (insert str)
-    (goto-char (point-min))
-    (search-forward "Loading Eask file ")
-    (forward-line 1)
-    (string-trim (buffer-substring (point) (point-max)))))
+Rest argument ARGS is the Eask's CLI arguments."
+  (concat (or easky-executable "eask") " "
+          (mapconcat #'shell-quote-argument args " ")))
 
 ;;;###autoload
 (defun easky-help ()
@@ -219,7 +274,7 @@ The rest argument STRINGS are concatenate with space between, then send it to
 (defun easky-info ()
   "Print Eask information."
   (interactive)
-  (easky--display (easky--strip-headers (easky-command "info"))))
+  (easky--display (easky-command "info")))
 
 ;;;###autoload
 (defun easky-locate ()
@@ -231,13 +286,13 @@ The rest argument STRINGS are concatenate with space between, then send it to
 (defun easky-compile ()
   "Clean up .eask directory."
   (interactive)
-  (easky--display (easky--strip-headers (easky-command "compile"))))
+  (easky--display (easky-command "compile")))
 
 ;;;###autoload
 (defun easky-files ()
   "Print the list of all package files."
   (interactive)
-  (easky--display (easky--strip-headers (easky-command "files"))))
+  (easky--display (easky-command "files")))
 
 ;;;###autoload
 (defun easky-archives ()
@@ -284,7 +339,7 @@ The rest argument STRINGS are concatenate with space between, then send it to
 (defun easky-path ()
   "Print the PATH (exec-path) from Eask sandbox."
   (interactive)
-  (easky--display (easky--strip-headers (easky-command "path"))))
+  (easky--display (easky-command "path")))
 
 ;;;###autoload
 (defalias 'easky-exec-path 'easky-path)
@@ -293,7 +348,7 @@ The rest argument STRINGS are concatenate with space between, then send it to
 (defun easky-load-path ()
   "Print the `load-path' from Eask sandbox."
   (interactive)
-  (easky--display (easky--strip-headers (easky-command "load-path"))))
+  (easky--display (easky-command "load-path")))
 
 ;;;###autoload
 (defun easky-init (dir)
@@ -382,7 +437,7 @@ The rest argument STRINGS are concatenate with space between, then send it to
 (defun easky-package ()
   "Package your package to dist folder."
   (interactive)
-  (easky--display (easky--strip-headers (easky-command "package"))))
+  (easky--display (easky-command "package")))
 
 ;;
 ;;; Install
@@ -425,7 +480,7 @@ The rest argument STRINGS are concatenate with space between, then send it to
 (defun easky-clean-workspace ()
   "Clean up .eask directory."
   (interactive)
-  (easky--display (easky--strip-headers (easky-command "clean" "workspace"))))
+  (easky--display (easky-command "clean" "workspace")))
 
 ;;;###autoload
 (defalias 'easky-clean-.eask 'easky-clean-workspace)
@@ -437,19 +492,19 @@ The rest argument STRINGS are concatenate with space between, then send it to
 Argument DEST is the destination folder, default is set to `dist'."
   (interactive
    (list (read-directory-name "Destination: " nil nil nil "dist")))
-  (easky--display (easky--strip-headers (easky-command "clean" "dist" dest))))
+  (easky--display (easky-command "clean" "dist" dest)))
 
 ;;;###autoload
 (defun easky-clean-elc ()
   "Remove byte compiled files generated by eask compile."
   (interactive)
-  (easky--display (easky--strip-headers (easky-command "clean" "elc"))))
+  (easky--display (easky-command "clean" "elc")))
 
 ;;;###autoload
 (defun easky-clean-all ()
   "Remove byte compiled files generated by eask compile."
   (interactive)
-  (easky--display (easky--strip-headers (easky-command "clean" "all"))))
+  (easky--display (easky-command "clean" "all")))
 
 (provide 'easky)
 ;;; easky.el ends here
