@@ -195,14 +195,17 @@ We use number to name our arguments, ARG0 and ARGS."
     (let ((inhibit-read-only t)
           (start (point)))
       (insert output)
-      ;; TODO: Apply color not working...
-      (ansi-color-apply-on-region start (point))
+      (ansi-color-apply-on-region start (point))  ; apply in buffer
       (funcall easky-display-function (easky--strip-headers (buffer-string)))
-      (when (and easky-move-point-for-output (easky-lv-message-p))
+      (when (easky-lv-message-p)
+        ;; Apply color in lv buffer!
+        (with-current-buffer (window-buffer lv-wnd)
+          (ansi-color-apply-on-region (point-min) (point-max)))
         ;; Move to end of buffer!
-        (with-selected-window lv-wnd
-          ;; XXX: Don't go above max lin, it will shift!
-          (goto-char (1- (point-max))))))))
+        (when easky-move-point-for-output
+          (with-selected-window lv-wnd
+            ;; XXX: Don't go above max lin, it will shift!
+            (goto-char (1- (point-max)))))))))
 
 (defun easky--default-sentinel (process &optional _event)
   "Default sentinel for PROCESS."
