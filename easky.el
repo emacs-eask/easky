@@ -195,7 +195,7 @@ We use number to name our arguments, ARG0 and ARGS."
     (let ((inhibit-read-only t)
           (start (point)))
       (insert output)
-      (ansi-color-apply-on-region start (point))  ; apply in buffer
+      (ansi-color-apply-on-region start (point) t)  ; apply in buffer
       (funcall easky-display-function (easky--strip-headers (buffer-string)))
       (when (easky-lv-message-p)
         ;; Apply color in lv buffer!
