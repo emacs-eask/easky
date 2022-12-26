@@ -193,7 +193,9 @@ We use number to name our arguments, ARG0 and ARGS."
       (funcall easky-display-function (easky--strip-headers (buffer-string)))
       (when (and easky-move-point-for-output (easky-lv-message-p))
         ;; Move to end of buffer!
-        (with-selected-window lv-wnd (goto-char (point-max)))))))
+        (with-selected-window lv-wnd
+          ;; XXX: Don't go above max lin, it will shift!
+          (goto-char (1- (point-max))))))))
 
 (defun easky--default-sentinel (process &optional _event)
   "Default sentinel for PROCESS."
@@ -259,6 +261,40 @@ We use number to name our arguments, ARG0 and ARGS."
 ;; (@* "Commands" )
 ;;
 
+(defmacro easky--exec-with-files (prompt form-1 form-2 form-3)
+  "Execut command with file selected.
+
+Argument PROMPT is a string to ask the user regarding the file action.
+
+Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
+  (declare (indent 1) (debug t))
+  `(let* ((options '(("All (Default)"   . "Select all files defined in your Eask-file")
+                     ("Select file"     . "Select a file through minibuffer")
+                     ("Enter wildcards" . "Enter wildcards pattern")))
+          (max-len (max (eask-seq-str-max (mapcar #'cdr options))
+                        (/ (frame-width) 2.5)))
+          (option
+           (completing-read
+            ,prompt
+            (lambda (string predicate action)
+              (if (eq action 'metadata)
+                  `(metadata
+                    (annotation-function
+                     . ,(lambda (cand)
+                          (concat (propertize " " 'display `((space :align-to (- right ,max-len))))
+                                  (cdr (assoc cand options))))))
+                (complete-with-action action options string predicate)))
+            nil t nil nil "All (Default)")))
+     (pcase option
+       ("All (Default)"   ,form-1)
+       ("Select file"     ,form-2)
+       ("Enter wildcards" ,form-3))))
+
+(defun easky--select-el-files (candidate)
+  "Return t if CANDIDATE is either directory or an elisp file."
+  (or (string-suffix-p ".el" candidate)
+      (file-directory-p candidate)))
+
 (defun easky-command (&rest args)
   "Form command string.
 
@@ -294,7 +330,13 @@ Rest argument ARGS is the Eask's CLI arguments."
 (defun easky-compile ()
   "Clean up .eask directory."
   (interactive)
-  (easky--display (easky-command "compile")))
+  (easky--exec-with-files "Select `compile' action: "
+    (easky--display (easky-command "compile"))
+    (let ((file (read-file-name "Select file for `compile': "
+                                nil nil t nil #'easky--select-el-files)))
+      (easky--display (easky-command "compile" file)))
+    (let ((wildcards (read-string "Wildcards: ")))
+      (easky--display (easky-command "compile" wildcards)))))
 
 ;;;###autoload
 (defun easky-files ()
@@ -313,6 +355,12 @@ Rest argument ARGS is the Eask's CLI arguments."
   "Print available archives."
   (interactive)
   (easky--display (easky-command "archives" "--all")))
+
+;;;###autoload
+(defun easky-keywords ()
+  "List available keywords that can be used in the header section."
+  (interactive)
+  (easky--display (easky-command "keywords")))
 
 ;;;###autoload
 (defun easky-path ()
@@ -390,7 +438,8 @@ Rest argument ARGS is the Eask's CLI arguments."
   (interactive)
   (easky--setup
     (if eask-scripts
-        (let* ((max-len (eask-seq-str-max (mapcar #'cdr eask-scripts)))
+        (let* ((max-len (max (eask-seq-str-max (mapcar #'cdr eask-scripts))
+                             (/ (frame-width) 2.5)))
                (selected-script
                 (completing-read
                  "Run Eask's script: "
@@ -471,9 +520,99 @@ Argument DEST is the destination folder, default is set to `dist'."
 
 ;;;###autoload
 (defun easky-lint-checkdoc ()
-  ""
+  "Run checkdoc."
   (interactive)
-  (easky--display (easky-command "lint" "checkdoc")))
+  (easky--exec-with-files "Select `checkdoc' action: "
+    (easky--display (easky-command "lint" "checkdoc"))
+    (let ((file (read-file-name "Select file for `checkdoc': "
+                                nil nil t nil #'easky--select-el-files)))
+      (easky--display (easky-command "lint" "checkdoc" file)))
+    (let ((wildcards (read-string "Wildcards: ")))
+      (easky--display (easky-command "lint" "checkdoc" wildcards)))))
+
+;;;###autoload
+(defun easky-lint-check-declare ()
+  "Run check-declare."
+  (interactive)
+  (easky--exec-with-files "Select `check-declare' action: "
+    (easky--display (easky-command "lint" "check-declare"))
+    (let ((file (read-file-name "Select file for `check-declare': "
+                                nil nil t nil #'easky--select-el-files)))
+      (easky--display (easky-command "lint" "check-declare" file)))
+    (let ((wildcards (read-string "Wildcards: ")))
+      (easky--display (easky-command "lint" "check-declare" wildcards)))))
+
+;;;###autoload
+(defun easky-lint-elint ()
+  "Run elint."
+  (interactive)
+  (easky--exec-with-files "Select `elint' action: "
+    (easky--display (easky-command "lint" "elint"))
+    (let ((file (read-file-name "Select file for `elint': "
+                                nil nil t nil #'easky--select-el-files)))
+      (easky--display (easky-command "lint" "elint" file)))
+    (let ((wildcards (read-string "Wildcards: ")))
+      (easky--display (easky-command "lint" "elint" wildcards)))))
+
+;;;###autoload
+(defun easky-lint-elsa ()
+  "Run elsa."
+  (interactive)
+  (easky--exec-with-files "Select `elsa' action: "
+    (easky--display (easky-command "lint" "elsa"))
+    (let ((file (read-file-name "Select file for `elsa': "
+                                nil nil t nil #'easky--select-el-files)))
+      (easky--display (easky-command "lint" "elsa" file)))
+    (let ((wildcards (read-string "Wildcards: ")))
+      (easky--display (easky-command "lint" "elsa" wildcards)))))
+
+;;;###autoload
+(defun easky-lint-indent ()
+  "Run indent-linet."
+  (interactive)
+  (easky--exec-with-files "Select `indent' action: "
+    (easky--display (easky-command "lint" "indent"))
+    (let ((file (read-file-name "Select file for `indent': "
+                                nil nil t nil #'easky--select-el-files)))
+      (easky--display (easky-command "lint" "indent" file)))
+    (let ((wildcards (read-string "Wildcards: ")))
+      (easky--display (easky-command "lint" "indent" wildcards)))))
+
+;;;###autoload
+(defun easky-lint-keywords ()
+  "Run keywords linter."
+  (interactive)
+  (easky--display (easky-command "lint" "keywords")))
+
+;;;###autoload
+(defun easky-lint-package ()
+  "Run package-lint."
+  (interactive)
+  (easky--exec-with-files "Select `package' action: "
+    (easky--display (easky-command "lint" "package"))
+    (let ((file (read-file-name "Select file for `package': "
+                                nil nil t nil #'easky--select-el-files)))
+      (easky--display (easky-command "lint" "package" file)))
+    (let ((wildcards (read-string "Wildcards: ")))
+      (easky--display (easky-command "lint" "package" wildcards)))))
+
+;;;###autoload
+(defun easky-lint-regexps ()
+  "Run relint."
+  (interactive)
+  (easky--exec-with-files "Select `regexps' action: "
+    (easky--display (easky-command "lint" "regexps"))
+    (let ((file (read-file-name "Select file for `regexps': "
+                                nil nil t nil #'easky--select-el-files)))
+      (easky--display (easky-command "lint" "regexps" file)))
+    (let ((wildcards (read-string "Wildcards: ")))
+      (easky--display (easky-command "lint" "regexps" wildcards)))))
+
+;;;###autoload
+(defalias 'easky-lint-relint 'easky-lint-regexps)
+
+;;
+;;; Testing
 
 (provide 'easky)
 ;;; easky.el ends here
