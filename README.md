@@ -7,7 +7,56 @@
 
 [![CI](https://github.com/emacs-eask/easky/actions/workflows/test.yml/badge.svg)](https://github.com/emacs-eask/easky/actions/workflows/test.yml)
 
-## 💾 Installation
+`Easky` is the interface to control [Eask CLI](https://github.com/emacs-eask/cli),
+it's a package manager and sandbox tools to test and manage your elisp packages.
+
+## 🔰 Getting Started
+
+### 🔍 Step 1. Install [Eask CLI](https://github.com/emacs-eask/cli)
+
+Download binaries from their [release page](https://github.com/emacs-eask/cli/releases)
+, and extracted somewhere on your machine. Then add the path `/path/to/eask/`
+to environment `PATH`, so you can access it anywhere.
+
+> 💡 For more installation options, see https://emacs-eask.github.io/Getting-Started/Install-Eask/.
+
+### 🔍 Step 2. Install `Easky` (this package)
+
+#### package.el
+
+This package is available from [JCS-ELPA](https://jcs-emacs.github.io/jcs-elpa/).
+Install from these repositories then you should be good to go!
+
+Normally, you don't need to add `(require 'easky)` to your configuration since
+most `easky` commands are autoloads and can be called without loading the module!
+
+#### use-package
+
+If you use [use-package](https://www.emacswiki.org/emacs/UsePackage), add the
+following to your `init.el` file:
+
+```elisp
+(use-package easky :ensure t)
+```
+
+or with `straight.el`:
+
+```elisp
+(use-package easky
+  :straight (easky :type git :host github :repo "emacs-eask/easky"))
+```
+
+#### Manual installation
+
+Copy all `.el` files in this repository to `~/.emacs.d/lisp` and add the
+following:
+
+```elisp
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+(require 'easky)
+```
+
+## Support Commands
 
 WIP
 
