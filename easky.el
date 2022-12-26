@@ -57,8 +57,13 @@
   :type 'function
   :group 'easky)
 
-(defcustom easky-lv-focus-p nil
-  "Select lv's window after command execution."
+(defcustom easky-focus-p nil
+  "Select window after command execution."
+  :type 'boolean
+  :group 'easky)
+
+(defcustom easky-move-point-for-output nil
+  "Controls whether interpreter output moves point to the end of the output."
   :type 'boolean
   :group 'easky)
 
@@ -185,7 +190,10 @@ We use number to name our arguments, ARG0 and ARGS."
       (insert output)
       ;; TODO: Apply color not working...
       (ansi-color-apply-on-region start (point))
-      (funcall easky-display-function (easky--strip-headers (buffer-string))))))
+      (funcall easky-display-function (easky--strip-headers (buffer-string)))
+      (when (and easky-move-point-for-output (easky-lv-message-p))
+        ;; Move to end of buffer!
+        (with-selected-window lv-wnd (goto-char (point-max)))))))
 
 (defun easky--default-sentinel (process &optional _event)
   "Default sentinel for PROCESS."
@@ -195,7 +203,7 @@ We use number to name our arguments, ARG0 and ARGS."
     ;; XXX: This is only for lv-message!
     (when (easky-lv-message-p)
       (add-hook 'pre-command-hook #'easky--pre-command-once)
-      (when easky-lv-focus-p
+      (when easky-focus-p
         (select-window lv-wnd)))))
 
 (defun easky--output-buffer (cmd)
@@ -459,7 +467,13 @@ Argument DEST is the destination folder, default is set to `dist'."
   (easky--display (easky-command "clean" "all")))
 
 ;;
-;;; Lint
+;;; Linting
+
+;;;###autoload
+(defun easky-lint-checkdoc ()
+  ""
+  (interactive)
+  (easky--display (easky-command "lint" "checkdoc")))
 
 (provide 'easky)
 ;;; easky.el ends here
