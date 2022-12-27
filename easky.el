@@ -453,7 +453,7 @@ Rest argument ARGS is the Eask's CLI arguments."
                (easky--message-concat
                 "Eask-file already exist,\n\n  "
                 (mapconcat #'identity files "\n   ")
-                "\n\nContinue the initialization? "))))
+                "\n\nContinue the creation? "))))
          (new-name "Eask"))
     (when continue
       (when files
