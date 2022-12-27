@@ -33,7 +33,7 @@
 ;;
 
 (defun easky-package--call-safely (ver func)
-  "Call FUNC interactively safely after checking the emacs version."
+  "Call FUNC interactively safely after checking the emacs VER."
   (if (version< emacs-version ver)
       (user-error
        (easky--message-concat
@@ -78,6 +78,24 @@ The form UNWIND is use to revert package information."
 
 ;;;###autoload
 (defalias 'easky-package-list-packages 'easky-list-packages)
+
+;;;###autoload
+(defun easky-list-installed-packages ()
+  "List packages."
+  (interactive)
+  (easky-package--setup
+      (progn
+        (package-activate-all)  ; refresh once!
+        (if package-activated-list
+            (package-show-package-list package-activated-list)
+          (user-error
+           (easky--message-concat
+            "No installed packges, try the following options:\n\n"
+            "  [1] 'M-x easky-package-install'\n"
+            "  [2] Add dependencies to your Eask-file, and 'M-x easky-install-deps'"
+            ))))
+    ;; XXX: We revert information after it's done displaying!
+    (add-hook 'package-menu-mode-hook #'easky-package--revert-info)))
 
 ;;;###autoload
 (defun easky-package-install ()
