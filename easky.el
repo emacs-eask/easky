@@ -349,7 +349,7 @@ Rest argument ARGS is the Eask's CLI arguments."
 (defun easky-locate ()
   "Print Eask installed location."
   (interactive)
-  (message (easky-command "locate")))
+  (easky--display (easky-command "locate")))
 
 ;;;###autoload
 (defun easky-compile ()
