@@ -33,6 +33,19 @@
 (declare-function easky--setup "easky.el")
 
 ;;
+;; (@* "Compat" )
+;;
+
+(defun easky-package--call-safely (ver func)
+  ""
+  (if (version< emacs-version ver)
+      (user-error
+       (easky--message-concat
+        (format "`%s' is not supported in your version of Emacs;" func)
+        (format "consider upgrading it to Emacs %s or later" ver)))
+    (call-interactively func)))
+
+;;
 ;; (@* "Core" )
 ;;
 
@@ -99,7 +112,7 @@ The form UNWIND is use to revert package information."
   "Recompile a package in Eask sandbox."
   (interactive)
   (easky-package--setup
-      (call-interactively #'package-recompile)
+      (easky-package--call-safely "29.0.50" #'package-recompile)
     (easky-package--revert-info)))
 
 ;;;###autoload
@@ -107,7 +120,7 @@ The form UNWIND is use to revert package information."
   "Recompile all packages in Eask sandbox."
   (interactive)
   (easky-package--setup
-      (call-interactively #'package-recompile-all)
+      (easky-package--call-safely "29.0.50" #'package-recompile-all)
     (easky-package--revert-info)))
 
 ;;;###autoload
@@ -123,7 +136,7 @@ The form UNWIND is use to revert package information."
   "Update a package from Eask sandbox."
   (interactive)
   (easky-package--setup
-      (call-interactively #'package-update)
+      (easky-package--call-safely "29.0.50" #'package-update)
     (easky-package--revert-info)))
 
 ;;;###autoload
@@ -131,7 +144,7 @@ The form UNWIND is use to revert package information."
   "Update all packages from Eask sandbox."
   (interactive)
   (easky-package--setup
-      (call-interactively #'package-update-all)
+      (easky-package--call-safely "29.0.50" #'package-update-all)
     (easky-package--revert-info)))
 
 (provide 'easky-package)
