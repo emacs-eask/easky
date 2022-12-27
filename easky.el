@@ -658,8 +658,7 @@ Argument PROMPT is a string to ask the user regarding the file action.
 
 Arguments FORM-1 and FORM-2 are execution by each file action."
   (declare (indent 1) (debug t))
-  `(let* ((options easky-exec-packages-options)
-          (max-len (max (eask-seq-str-max (mapcar #'cdr easky-exec-packages-options))
+  `(let* ((max-len (max (eask-seq-str-max (mapcar #'cdr easky-exec-packages-options))
                         (/ (frame-width) 2.5)))
           (option
            (completing-read
