@@ -447,33 +447,42 @@ Rest argument ARGS is the Eask's CLI arguments."
    (list (read-directory-name "Where you want to place your Eask-file: ")))
   (let* ((eask-api-strict-p)  ; disable strict
          (files (eask-api-files dir))
-         (continue
-          (or (not files)
-              (y-or-n-p
-               (easky--message-concat
-                "Eask-file already exist,\n\n  "
-                (mapconcat #'identity files "\n   ")
-                "\n\nContinue the creation? "))))
-         (new-name "Eask"))
-    (when continue
-      (when files
-        (setq new-name (read-file-name "New Eask-file name: " dir nil nil "Eask")))
-      (when (file-exists-p new-name)
-        (user-error "File already exists, operation aborted"))
-      (let* ((project-name (file-name-nondirectory (directory-file-name default-directory)))
-             (package-name (read-string (format "package name: (%s) " project-name) nil nil project-name))
-             (version (read-string "version: (1.0.0) " nil nil "1.0.0"))
-             (description (read-string "description: "))
-             (guess-entry-point (format "%s.el" project-name))
-             (entry-point (read-string (format "entry point: (%s) " guess-entry-point)
-                                       nil nil guess-entry-point))
-             (emacs-version (read-string "emacs version: (26.1) " nil nil "26.1"))
-             (website (read-string "website: "))
-             (keywords (read-string "keywords: "))
-             (keywords (split-string keywords "[, ]"))
-             (keywords (string-join keywords "\" \""))
-             (content (format
-                       "(package \"%s\"
+         (new-name (expand-file-name "Eask"))
+         (base-name)
+         (invalid-name))
+    (when (and files
+               (yes-or-no-p (easky--message-concat "Eask-file already exist,\n\n  "
+                                                   (mapconcat #'identity files "\n   ")
+                                                   "\n\nContinue the creation? ")))
+      (while (or (file-exists-p new-name) invalid-name)
+        (setq new-name (read-file-name
+                        (format
+                         (concat (if invalid-name
+                                     "[?] Invalid filename `%s', "
+                                   "[?] Filename `%s' already taken, ")
+                                 "try another one: ")
+                         (file-name-nondirectory (directory-file-name new-name)))
+                        dir nil nil nil
+                        (lambda (candidate) (string-prefix-p "Eask" candidate)))
+              base-name (file-name-nondirectory (directory-file-name new-name))
+              invalid-name (not (eask-api-check-filename base-name)))
+        (easky--inhibit-log (message "Checking filename..."))
+        (sleep-for 0.2)))
+    ;; Starting Eask-file creation!
+    (let* ((project-name (file-name-nondirectory (directory-file-name default-directory)))
+           (package-name (read-string (format "package name: (%s) " project-name) nil nil project-name))
+           (version (read-string "version: (1.0.0) " nil nil "1.0.0"))
+           (description (read-string "description: "))
+           (guess-entry-point (format "%s.el" project-name))
+           (entry-point (read-string (format "entry point: (%s) " guess-entry-point)
+                                     nil nil guess-entry-point))
+           (emacs-version (read-string "emacs version: (26.1) " nil nil "26.1"))
+           (website (read-string "website: "))
+           (keywords (read-string "keywords: "))
+           (keywords (split-string keywords "[, ]"))
+           (keywords (string-join keywords "\" \""))
+           (content (format
+                     "(package \"%s\"
          \"%s\"
          \"%s\")
 
@@ -488,12 +497,12 @@ Rest argument ARGS is the Eask's CLI arguments."
 
 (depends-on \"emacs\" \"%s\")
 "
-                       package-name version description website keywords
-                       entry-point emacs-version)))
-        (lv-message content)
-        (when (yes-or-no-p (format "About to write to %s:\n\nIs this Okay? " new-name))
-          (write-region content nil new-name))
-        (lv-delete-window)))))
+                     package-name version description website keywords
+                     entry-point emacs-version)))
+      (lv-message content)
+      (when (yes-or-no-p (format "About to write to %s:\n\nIs this Okay? " new-name))
+        (write-region content nil new-name))
+      (lv-delete-window))))
 
 ;;;###autoload
 (defun easky-run ()
