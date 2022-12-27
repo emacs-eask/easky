@@ -26,19 +26,14 @@
 
 (require 'package)
 
-;;
-;; (@* "Externals" )
-;;
-
-(declare-function easky--setup "easky.el")
-(declare-function easky--message-concat "easky.el")
+(require 'easky)
 
 ;;
 ;; (@* "Compat" )
 ;;
 
 (defun easky-package--call-safely (ver func)
-  ""
+  "Call FUNC interactively safely after checking the emacs version."
   (if (version< emacs-version ver)
       (user-error
        (easky--message-concat

@@ -41,8 +41,6 @@
 (require 'ansi)  ; we need `ansi' to run through Eask API
 (require 'lv)
 
-(require 'easky-package)
-
 (defgroup easky nil
   "Control Eask in Emacs."
   :prefix "easky-"
@@ -84,8 +82,6 @@
 ;;
 
 (defvar eask-api-strict-p)
-
-(declare-function easky-package--setup "easky-package.el")
 
 
 ;;
