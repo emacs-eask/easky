@@ -18,6 +18,10 @@ Easky is out of the box and comes along with many features.
 |-------------------------|---------------------------------------------|
 | ![info](./etc/info.png) | ![list-installed](./etc/list-installed.png) |
 
+| Linting with `checkdoc`         | Testing with `buttercup`          |
+|---------------------------------|-----------------------------------|
+| ![checkdoc](./etc/checkdoc.png) | ![buttercup](./etc/buttercup.png) |
+
 ## 🔰 Getting Started
 
 ### 🔍 Step 1. Install [Eask CLI](https://github.com/emacs-eask/cli)
