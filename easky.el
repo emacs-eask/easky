@@ -33,6 +33,7 @@
 
 (require 'ansi-color)
 (require 'cl-lib)
+(require 'frame)
 
 (require 'eask-api)
 (require 'eask-api-core)
@@ -84,6 +85,28 @@
 (defvar eask-api-strict-p)
 
 (declare-function easky-package--setup "easky-package.el")
+
+
+;;
+;; (@* "Util" )
+;;
+
+(defmacro easky--inhibit-log (&rest body)
+  "Execute BODY without write it to message buffer."
+  (declare (indent 0) (debug t))
+  `(let (message-log-max) ,@body))
+
+;;
+;; (@* "Compat" )
+;;
+
+(defun easky--ansi-color-apply-on-region (start end &optional preserve-sequences)
+  "Compatible version of function `ansi-color-apply-on-region'.
+
+Arguments START, END and PRESERVE-SEQUENCES is the same to original function."
+  (if (version< emacs-version "28.1")
+      (ansi-color-apply-on-region start end)
+    (ansi-color-apply-on-region start end preserve-sequences)))
 
 ;;
 ;; (@* "Core" )
@@ -203,7 +226,7 @@ We use number to name our arguments, ARG0 and ARGS."
     (let ((inhibit-read-only t)
           (start (point)))
       (insert output)
-      (ansi-color-apply-on-region start (point) t)  ; apply in buffer
+      (easky--ansi-color-apply-on-region start (point) t)  ; apply in buffer
       (funcall easky-display-function (easky--strip-headers (buffer-string)))
       (when (easky-lv-message-p)
         ;; Apply color in lv buffer!
@@ -218,6 +241,10 @@ We use number to name our arguments, ARG0 and ARGS."
 (defun easky--default-sentinel (process &optional _event)
   "Default sentinel for PROCESS."
   (when (memq (process-status process) '(exit signal))
+    (easky--inhibit-log
+      (cl-case (process-status process)
+        (`signal (message "Easky task exit with error code"))  ; TODO: print with error code!
+        (`exit (message "Easky task completed"))))
     (delete-process process)
     (setq easky-process nil)
     ;; XXX: This is only for lv-message!
@@ -300,9 +327,9 @@ Argument PROMPT is a string to ask the user regarding the file action.
 
 Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
   (declare (indent 1) (debug t))
-  `(let* ((options '(("All (Default)"   . "Select all files defined in your Eask-file")
-                     ("Select file"     . "Select a file through minibuffer")
-                     ("Enter wildcards" . "Enter wildcards pattern")))
+  `(let* ((options '(("All files (Default)" . "Select all files defined in your Eask-file")
+                     ("Select file"         . "Select a file through minibuffer")
+                     ("Enter wildcards"     . "Enter wildcards pattern")))
           (max-len (max (eask-seq-str-max (mapcar #'cdr options))
                         (/ (frame-width) 2.5)))
           (option
@@ -316,11 +343,12 @@ Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
                           (concat (propertize " " 'display `((space :align-to (- right ,max-len))))
                                   (cdr (assoc cand options))))))
                 (complete-with-action action options string predicate)))
-            nil t nil nil "All (Default)")))
-     (pcase option
-       ("All (Default)"   ,form-1)
-       ("Select file"     ,form-2)
-       ("Enter wildcards" ,form-3))))
+            nil t nil nil (nth 0 options)))
+          (index (cl-position option (mapcar #'car options) :test 'string=)))
+     (pcase index
+       (0 ,form-1)
+       (1 ,form-2)
+       (2 ,form-3))))
 
 (defun easky--select-el-files (candidate)
   "Return t if CANDIDATE is either directory or an elisp file."
