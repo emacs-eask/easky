@@ -165,14 +165,15 @@ We use number to name our arguments, ARG0 and ARGS."
       (easky--message-concat
        "No executable named `eask` in the PATH environment, make sure:\n\n"
        "  [1] You have installed eask-cli and added to your PATH\n"
-       "  [2] You can manually set variable `easky-executable' to point to eask executable\n\n"
-       "For more information, find the manual at https://emacs-eask.github.io/")))
+       "  [2] You can manually set variable `easky-executable' to point to eask executable"
+       "\n\nFor more information, find the manual at https://emacs-eask.github.io/")))
     ;; Invalid Eask Project!
     ((not (easky--valid-project-p))
      (user-error (easky--message-concat
                   "Error execute Easky command, invalid Eask project.\n\n"
                   "  [1] Make sure you have a valid proejct-root\n"
-                  "  [2] Make sure you have Eask-file inside your project\n")))
+                  "  [2] Make sure you have Eask-file inside your project"
+                  "\n\nYou can creat Eask-file by doing 'M-x eask-init'")))
     ;; Okay! Good to go!
     (t (easky--setup-eask-env)
        (let* (eask--initialized-p
@@ -192,8 +193,8 @@ We use number to name our arguments, ARG0 and ARGS."
                  (format "[ERROR] %s\n\n" easky--error-message))
                "Error loading Eask-file, few suggestions: \n\n"
                "  [1] Lint your Eask-file with command `eask check-eask [EASK-FILE]`\n"
-               "  [2] Make sure your Eask-file doesn't contain any invalid syntax\n\n"
-               "Here are useful tools to help you edit Eask-file:\n\n"
+               "  [2] Make sure your Eask-file doesn't contain any invalid syntax"
+               "\n\nHere are useful tools to help you edit Eask-file:\n\n"
                "  | eask-mode    | major mode for editing Eask files | https://github.com/emacs-eask/eask-mode    |\n"
                "  | company-eask | Company backend for Eask-file     | https://github.com/emacs-eask/company-eask |\n"
                "  | eldoc-eask   | Eldoc support for Eask-file       | https://github.com/emacs-eask/eldoc-eask   |\n"))))))))
