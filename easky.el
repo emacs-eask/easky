@@ -219,8 +219,15 @@ We use number to name our arguments, ARG0 and ARGS."
       (when easky-focus-p
         (select-window lv-wnd)))))
 
+(defun easky--setup-eask-env ()
+  "Set up for eask environment."
+  (setenv "EASK_HASCOLORS" (if (or (display-graphic-p) (display-color-cells))
+                               "true"
+                             nil)))
+
 (defun easky--output-buffer (cmd)
   "Output CMD to buffer."
+  (easky--setup-eask-env)
   (when (and easky-process
              (yes-or-no-p "Easky is still busy, kill it anyway? "))
     (delete-process easky-process)
