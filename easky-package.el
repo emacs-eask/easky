@@ -31,6 +31,7 @@
 ;;
 
 (declare-function easky--setup "easky.el")
+(declare-function easky--message-concat "easky.el")
 
 ;;
 ;; (@* "Compat" )
