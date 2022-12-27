@@ -195,9 +195,11 @@ We use number to name our arguments, ARG0 and ARGS."
                "  [1] Lint your Eask-file with command `eask check-eask [EASK-FILE]`\n"
                "  [2] Make sure your Eask-file doesn't contain any invalid syntax"
                "\n\nHere are useful tools to help you edit Eask-file:\n\n"
+               "  | Package      | Description                       | Repository URL                             |\n"
+               "  | ------------ | --------------------------------- | ------------------------------------------ |\n"
                "  | eask-mode    | major mode for editing Eask files | https://github.com/emacs-eask/eask-mode    |\n"
                "  | company-eask | Company backend for Eask-file     | https://github.com/emacs-eask/company-eask |\n"
-               "  | eldoc-eask   | Eldoc support for Eask-file       | https://github.com/emacs-eask/eldoc-eask   |\n"))))))))
+               "  | eldoc-eask   | Eldoc support for Eask-file       | https://github.com/emacs-eask/eldoc-eask   |"))))))))
 
 ;;
 ;; (@* "Display" )
