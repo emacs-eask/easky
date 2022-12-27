@@ -64,6 +64,16 @@ WIP
 
 ### 🧪 Variables
 
+List of variables that interacte with `easky`'s behaviour.
+
+- `easky-executable` - Executable to eask-cli. (Default: `nil`)
+- `easky-display-function` - Function to display Easky's result. (Default: `#'lv-message`)
+- `easky-focus-p` - Select window after command execution. (Default: `nil`)
+- `easky-move-point-for-output` - Controls whether interpreter output moves point to the end of the output. (Default: `nil`)
+- `easky-timeout-seconds` - Timeout seconds for running too long process. (Default: `30`)
+
+## 🔌 Plugins
+
 WIP
 
 ## Contribute
