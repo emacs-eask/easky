@@ -100,6 +100,7 @@
 ;; (@* "Compat" )
 ;;
 
+;; TODO: Remove this after we dropped version 27.x!
 (defun easky--ansi-color-apply-on-region (start end &optional preserve-sequences)
   "Compatible version of function `ansi-color-apply-on-region'.
 

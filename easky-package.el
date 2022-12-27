@@ -71,13 +71,6 @@ The form UNWIND is use to revert package information."
 (defalias 'easky-package-list-packages 'easky-list-packages)
 
 ;;;###autoload
-(defun easky-package-info ()
-  "Print Eask-file information."
-  (interactive)
-  ;; TODO: ..
-  )
-
-;;;###autoload
 (defun easky-package-install ()
   "Install a package to Eask sandbox."
   (interactive)
