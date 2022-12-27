@@ -128,6 +128,12 @@ We use number to name our arguments, ARG0 and ARGS."
      ,@body
      (dolist (func easky-ignore-functions) (advice-remove func #'easky--ignore-error))))
 
+(defun easky--setup-eask-env ()
+  "Set up for eask environment."
+  (setenv "EASK_HASCOLORS" (if (or (display-graphic-p) (display-color-cells))
+                               "true"
+                             nil)))
+
 (defmacro easky--setup (&rest body)
   "Execute BODY without touching the Eask-file global variables."
   (declare (indent 0) (debug t))
@@ -219,12 +225,6 @@ We use number to name our arguments, ARG0 and ARGS."
       (add-hook 'pre-command-hook #'easky--pre-command-once)
       (when easky-focus-p
         (select-window lv-wnd)))))
-
-(defun easky--setup-eask-env ()
-  "Set up for eask environment."
-  (setenv "EASK_HASCOLORS" (if (or (display-graphic-p) (display-color-cells))
-                               "true"
-                             nil)))
 
 (defun easky--output-buffer (cmd)
   "Output CMD to buffer."
