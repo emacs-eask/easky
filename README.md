@@ -18,7 +18,12 @@ Download binaries from their [release page](https://github.com/emacs-eask/cli/re
 , and extracted somewhere on your machine. Then add the path `/path/to/eask/`
 to environment `PATH`, so you can access it anywhere.
 
-> 💡 For more installation options, see https://emacs-eask.github.io/Getting-Started/Install-Eask/.
+💡 For more installation options, see https://emacs-eask.github.io/Getting-Started/Install-Eask/.
+
+> ⚠ Warning
+>
+> Make sure the executable `eask` has the permission to execute! Use `chmod`
+> command if needed!
 
 ### 🔍 Step 2. Install `Easky` (this package)
 
@@ -56,15 +61,19 @@ following:
 (require 'easky)
 ```
 
-## Support Commands
+## 📇 Support Commands
 
-WIP
+The following are the functions provided by `easky`
+
+| Commands     | Description |
+|--------------|-------------|
+| `easky-info` |             |
 
 ## 🔧 Customization
 
 ### 🧪 Variables
 
-List of variables that interacte with `easky`'s behaviour.
+List of variables that interact with `easky`'s behaviour.
 
 - `easky-executable` - Executable to eask-cli. (Default: `nil`)
 - `easky-display-function` - Function to display Easky's result. (Default: `#'lv-message`)
@@ -73,6 +82,10 @@ List of variables that interacte with `easky`'s behaviour.
 - `easky-timeout-seconds` - Timeout seconds for running too long process. (Default: `30`)
 
 ## 🔌 Plugins
+
+`easky` comes with a couple of useful additions that can be used along with it.
+
+### 📦 `package` module
 
 WIP
 
