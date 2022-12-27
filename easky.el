@@ -147,7 +147,8 @@ We use number to name our arguments, ARG0 and ARGS."
                   "  [1] Make sure you have a valid proejct-root\n"
                   "  [2] Make sure you have Eask-file inside your project\n")))
     ;; Okay! Good to go!
-    (t (let* (eask--initialized-p
+    (t (easky--setup-eask-env)
+       (let* (eask--initialized-p
               easky--error-message  ; init error message
               (user-emacs-directory (expand-file-name (concat ".eask/" emacs-version "/")))
               (package-user-dir (expand-file-name "elpa" user-emacs-directory))
@@ -227,7 +228,6 @@ We use number to name our arguments, ARG0 and ARGS."
 
 (defun easky--output-buffer (cmd)
   "Output CMD to buffer."
-  (easky--setup-eask-env)
   (when (and easky-process
              (yes-or-no-p "Easky is still busy, kill it anyway? "))
     (delete-process easky-process)
