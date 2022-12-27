@@ -10,6 +10,14 @@
 `Easky` is the interface to control [Eask CLI](https://github.com/emacs-eask/cli),
 it's a package manager and sandbox tools to test and manage your elisp packages.
 
+## 🏆 Features
+
+Easky is out of the box and comes along with many features.
+
+| Package Management (sandbox) | Eask-file Management |
+|------------------------------|----------------------|
+|                              |                      |
+
 ## 🔰 Getting Started
 
 ### 🔍 Step 1. Install [Eask CLI](https://github.com/emacs-eask/cli)
@@ -105,14 +113,14 @@ Commands to help you lint your packages:
 | `easky-lint-keywords`      | Run keywords linter |
 | `easky-lint-regexps`       | Run relint          |
 
-### 📝 Testing
+### 🔍 Testing
 
 Commands to help you test your packages:
 
 | Commands                | Description                       |
 |-------------------------|-----------------------------------|
 | `easky-test-ert`        | Run ert tests                     |
-| `easky-test-ert-runner` | Run ert test through `ert-runner' |
+| `easky-test-ert-runner` | Run ert test through `ert-runner` |
 | `easky-test-buttercup`  | Run buttercup tests               |
 
 ### 💻 Direct execution
