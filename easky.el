@@ -558,7 +558,7 @@ Rest argument ARGS is the Eask's CLI arguments."
   (easky--display (easky-command "exec" command)))
 
 ;;;###autoload
-(defun easky-emacs ()
+(defun easky-emacs (command)
   "Run eask emacs."
   (interactive
    (list (read-string "eask emacs ")))
