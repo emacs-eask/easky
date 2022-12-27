@@ -34,6 +34,7 @@
 (require 'ansi-color)
 (require 'cl-lib)
 (require 'frame)
+(require 'files)
 
 (require 'eask-api)
 (require 'eask-api-core)
@@ -353,7 +354,8 @@ Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
 
 (defun easky--select-el-files (candidate)
   "Return t if CANDIDATE is either directory or an elisp file."
-  (or (string-suffix-p ".el" candidate)
+  (or (and (string-suffix-p ".el" candidate)
+           (not (string= dir-locals-file candidate)))
       (file-directory-p candidate)))
 
 (defun easky-command (&rest args)
