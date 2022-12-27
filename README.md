@@ -87,6 +87,9 @@ commands:
 | `easky-archives`         | List in used archives                                          |
 | `easky-run`              | Execute Eask's script (with completion)                        |
 | `easky-package`          | Package (build) your package                                   |
+| `eask-install`           | Install packages, see also `M-x easky-package-install`         |
+| `eask-uninstall`         | Untnstall packages, see also `M-x easky-package-delete`        |
+| `easky-reinstall`        | Reinstall packages, see also `M-x easky-package-reinstall`     |
 | `easky-install-deps`     | Install all package dependencies                               |
 | `easky-install-deps-dev` | Like `easky-install-deps` but include development dependencies |
 | `easky-help`             | Print Eask help manual                                         |
@@ -160,6 +163,14 @@ List of variables that interact with `easky`'s behaviour.
 ### 📦 `package` module
 
 WIP
+
+## Other packages you may be interested
+
+- [eask-mode](https://github.com/emacs-eask/eask-mode) - major mode for editing Eask files
+- [company-eask](https://github.com/emacs-eask/company-eask) - Company backend for Eask-file
+- [eldoc-eask](https://github.com/emacs-eask/eldoc-eask) - Eldoc support for Eask-file
+- [flycheck-eask](https://github.com/emacs-eask/flycheck-eask) - Eask support in Flycheck
+- [flymake-eask](https://github.com/flymake/flymake-eask) - Eask support in Flymake
 
 ## Contribute
 

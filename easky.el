@@ -322,6 +322,12 @@ We use number to name our arguments, ARG0 and ARGS."
 ;; (@* "Commands" )
 ;;
 
+(defconst easky-exec-files-options
+  '(("All files (Default)" . "Select all files defined in your Eask-file")
+    ("Select file"         . "Select a file through completing-read")
+    ("Enter wildcards"     . "Enter wildcards pattern"))
+  "Options for command `check-eask'.")
+
 (defmacro easky--exec-with-files (prompt form-1 form-2 form-3)
   "Execut command with file selected.
 
@@ -329,10 +335,7 @@ Argument PROMPT is a string to ask the user regarding the file action.
 
 Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
   (declare (indent 1) (debug t))
-  `(let* ((options '(("All files (Default)" . "Select all files defined in your Eask-file")
-                     ("Select file"         . "Select a file through minibuffer")
-                     ("Enter wildcards"     . "Enter wildcards pattern")))
-          (max-len (max (eask-seq-str-max (mapcar #'cdr options))
+  `(let* ((max-len (max (eask-seq-str-max (mapcar #'cdr easky-exec-files-options))
                         (/ (frame-width) 2.5)))
           (option
            (completing-read
@@ -343,10 +346,10 @@ Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
                     (annotation-function
                      . ,(lambda (cand)
                           (concat (propertize " " 'display `((space :align-to (- right ,max-len))))
-                                  (cdr (assoc cand options))))))
-                (complete-with-action action options string predicate)))
-            nil t nil nil (nth 0 options)))
-          (index (cl-position option (mapcar #'car options) :test 'string=)))
+                                  (cdr (assoc cand easky-exec-files-options))))))
+                (complete-with-action action easky-exec-files-options string predicate)))
+            nil t nil nil (nth 0 easky-exec-files-options)))
+          (index (cl-position option (mapcar #'car easky-exec-files-options) :test 'string=)))
      (pcase index
        (0 ,form-1)
        (1 ,form-2)
@@ -400,6 +403,15 @@ Rest argument ARGS is the Eask's CLI arguments."
       (easky--display (easky-command "compile" file)))
     (let ((wildcards (read-string "Wildcards: ")))
       (easky--display (easky-command "compile" wildcards)))))
+
+;;;###autoload
+(defun easky-search (query)
+  "Search available packages with QUERY.
+
+This can be replaced with `easky-package-install' command."
+  (interactive
+   (list (read-string "Query: ")))
+  (easky--display (easky-command "search" query)))
 
 ;;;###autoload
 (defun easky-files ()
@@ -463,7 +475,7 @@ Rest argument ARGS is the Eask's CLI arguments."
                                  "try another one: ")
                          (file-name-nondirectory (directory-file-name new-name)))
                         dir nil nil nil
-                        (lambda (candidate) (string-prefix-p "Eask" candidate)))
+                        #'eask-api-check-filename)
               base-name (file-name-nondirectory (directory-file-name new-name))
               invalid-name (not (eask-api-check-filename base-name)))
         (easky--inhibit-log (message "Checking filename..."))
@@ -540,32 +552,158 @@ Rest argument ARGS is the Eask's CLI arguments."
    (list (read-directory-name "Destination: " nil nil nil "dist")))  ; default to dist
   (easky--display (easky-command "package" "--dest" dir)))
 
+;;;###autoload
+(defun easky-upgrade ()
+  "Upgrade packages."
+  (interactive)
+  (easky--display (easky-command "upgrade")))
+
+;;;###autoload
+(defun easky-pkg-file ()
+  "Generate pkg-file and printed out!"
+  (interactive)
+  (easky--display (easky-command "pkg-file")))
+
+;;;###autoload
+(defun easky-recipe ()
+  "Recommend me a recipe format."
+  (interactive)
+  (easky--display (easky-command "recipe")))
+
+;;;###autoload
+(defun easky-outdated ()
+  "List outdated packages."
+  (interactive)
+  (easky--display (easky-command "outdated")))
+
+;;
+;;; Eask-file Checker
+
+(defconst easky-check-eask-options
+  '(("All Eask-files (Default)" . "Check all eask files")
+    ("Pick a Eask-file"         . "Select an Eask-file through completing-read"))
+  "Options for command `check-eask'.")
+
+(defun easky-check-eask-collection (string predicate action)
+  "Collection arguments for function `easky-check-eask'.
+
+Arguments STRING, PREDICATE and ACTION are default value for collection
+argument."
+  (if (eq action 'metadata)
+      (let ((max-len (max (eask-seq-str-max (mapcar #'cdr easky-check-eask-options))
+                          (/ (frame-width) 2.5))))
+        `(metadata
+          (annotation-function
+           . ,(lambda (cand)
+                (concat (propertize " " 'display `((space :align-to (- right ,max-len))))
+                        (cdr (assoc cand easky-check-eask-options)))))))
+    (complete-with-action action easky-check-eask-options string predicate)))
+
+;;;###autoload
+(defun easky-check-eask (action)
+  "Run Eask-file checker.
+
+Argument ACTION is used to select checker's action."
+  (interactive
+   (list (completing-read "Select `check-eask' action: "
+                          #'easky-check-eask-collection nil t nil nil
+                          (car (nth 0 easky-check-eask-options)))))
+  (let* ((options (mapcar #'car easky-check-eask-options))
+         (index (cl-position action options :test 'string=)))
+    (pcase index
+      (0 (easky--display (easky-command "check-eask")))
+      (1 (let ((file (read-file-name "Select file for `check-eask': "
+                                     nil nil t nil
+                                     (lambda (cand)
+                                       (or (eask-api-check-filename cand)
+                                           (file-directory-p cand))))))
+           (easky--display (easky-command "check-eask" file)))))))
+
 ;;
 ;;; Execution
 
 ;;;###autoload
-(defun easky-eask (command)
-  "Run Eask CLI directly."
+(defun easky-eask (args)
+  "Run Eask CLI directly with ARGS."
   (interactive
    (list (read-string "eask ")))
-  (easky--display (easky-command command)))
+  (easky--display (easky-command args)))
 
 ;;;###autoload
-(defun easky-exec (command)
-  "Run eask exec."
+(defun easky-exec (args)
+  "Run eask exec with ARGS."
   (interactive
    (list (read-string "eask exec ")))
-  (easky--display (easky-command "exec" command)))
+  (easky--display (easky-command "exec" args)))
 
 ;;;###autoload
-(defun easky-emacs (command)
-  "Run eask emacs."
+(defun easky-emacs (args)
+  "Run eask emacs with ARGS."
   (interactive
    (list (read-string "eask emacs ")))
-  (easky--display (easky-command "emacs" command)))
+  (easky--display (easky-command "emacs" args)))
 
 ;;
 ;;; Install
+
+(defconst easky-exec-packages-options
+  '(("Current Package (Default)" . "Operate with current package defined in Eask-file")
+    ("Specified"                 . "Specify packages through read-string"))
+  "Options for command `check-eask'.")
+
+(defmacro easky--exec-with-packages (prompt form-1 form-2)
+  "Execut command with packages selected.
+
+Argument PROMPT is a string to ask the user regarding the file action.
+
+Arguments FORM-1 and FORM-2 are execution by each file action."
+  (declare (indent 1) (debug t))
+  `(let* ((options easky-exec-packages-options)
+          (max-len (max (eask-seq-str-max (mapcar #'cdr easky-exec-packages-options))
+                        (/ (frame-width) 2.5)))
+          (option
+           (completing-read
+            ,prompt
+            (lambda (string predicate action)
+              (if (eq action 'metadata)
+                  `(metadata
+                    (annotation-function
+                     . ,(lambda (cand)
+                          (concat (propertize " " 'display `((space :align-to (- right ,max-len))))
+                                  (cdr (assoc cand easky-exec-packages-options))))))
+                (complete-with-action action easky-exec-packages-options string predicate)))
+            nil t nil nil (nth 0 easky-exec-packages-options)))
+          (index (cl-position option (mapcar #'car easky-exec-packages-options) :test 'string=)))
+     (pcase index
+       (0 ,form-1)
+       (1 ,form-2))))
+
+;;;###autoload
+(defun easky-install ()
+  "Install packages."
+  (interactive)
+  (easky--exec-with-packages "Select `install' action: "
+    (easky--display (easky-command "install"))
+    (let ((pattern (read-string "Specify packages: ")))
+      (easky--display (easky-command "install" pattern)))))
+
+;;;###autoload
+(defun easky-uninstall ()
+  "Uninstall packages."
+  (interactive)
+  (easky--exec-with-packages "Select `uninstall' action: "
+    (easky--display (easky-command "uninstall"))
+    (let ((pattern (read-string "Specify packages: ")))
+      (easky--display (easky-command "uninstall" pattern)))))
+
+;;;###autoload
+(defun easky-reinstall ()
+  "Reinstall packages."
+  (interactive)
+  (easky--exec-with-packages "Select `reinstall' action: "
+    (easky--display (easky-command "reinstall"))
+    (let ((pattern (read-string "Specify packages: ")))
+      (easky--display (easky-command "reinstall" pattern)))))
 
 ;;;###autoload
 (defun easky-install-deps ()
@@ -713,7 +851,7 @@ Argument DEST is the destination folder, default is set to `dist'."
 
 ;;;###autoload
 (defun easky-test-ert ()
-  "Run ert tests."
+  "Run ert test."
   (interactive)
   (easky--exec-with-files "Select `ert' action: "
     (easky--display (easky-command "test" "ert"))
@@ -737,7 +875,7 @@ Argument DEST is the destination folder, default is set to `dist'."
 
 ;;;###autoload
 (defun easky-test-buttercup ()
-  "Run buttercup tests."
+  "Run buttercup test."
   (interactive)
   (easky--exec-with-files "Select `buttercup' action: "
     (easky--display (easky-command "test" "buttercup"))
