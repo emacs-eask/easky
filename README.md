@@ -14,9 +14,9 @@ it's a package manager and sandbox tools to test and manage your elisp packages.
 
 Easky is out of the box and comes along with many features.
 
-| Package Management (sandbox) | Eask-file Management |
-|------------------------------|----------------------|
-|                              |                      |
+| List installed packages           | Eask-file Management    |
+|-----------------------------------|-------------------------|
+| ![info](./etc/list-installed.png) | ![info](./etc/info.png) |
 
 ## 🔰 Getting Started
 
