@@ -113,6 +113,8 @@ Commands to help you lint your packages:
 | `easky-lint-keywords`      | Run keywords linter |
 | `easky-lint-regexps`       | Run relint          |
 
+> 💡 These extenral tools are automatically installed in your sandbox!
+
 ### 🔍 Testing
 
 Commands to help you test your packages:
@@ -123,7 +125,11 @@ Commands to help you test your packages:
 | `easky-test-ert-runner` | Run ert test through `ert-runner` |
 | `easky-test-buttercup`  | Run buttercup tests               |
 
+> 💡 These extenral tools are automatically installed in your sandbox!
+
 ### 💻 Direct execution
+
+Sometimes you would want to execute some command directly!
 
 | Commands      | Description           |
 |---------------|-----------------------|
