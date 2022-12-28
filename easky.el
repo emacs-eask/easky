@@ -83,7 +83,6 @@
 
 (defvar eask-api-strict-p)
 
-
 ;;
 ;; (@* "Util" )
 ;;
