@@ -164,7 +164,7 @@ List of variables that interact with `easky`'s behaviour.
 
 WIP
 
-## Other packages you may be interested
+## 🌟 Other packages you may be interested
 
 - [eask-mode](https://github.com/emacs-eask/eask-mode) - major mode for editing Eask files
 - [company-eask](https://github.com/emacs-eask/company-eask) - Company backend for Eask-file
