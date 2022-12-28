@@ -15,6 +15,7 @@
 (source "jcs-elpa")
 
 (depends-on "emacs" "26.1")
+(depends-on "eask-mode")
 (depends-on "eask-api")
 (depends-on "ansi")
 (depends-on "lv")

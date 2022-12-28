@@ -6,8 +6,8 @@
 ;; Maintainer: Shen, Jen-Chieh <jcs090218@gmail.com>
 ;; URL: https://github.com/emacs-eask/easky
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "26.1") (eask-api "0.1.0") (ansi "0.4.1") (lv "0.0"))
-;; Keywords: lisp easky
+;; Package-Requires: ((emacs "26.1") (eask-mode "0.1.0") (eask-api "0.1.0") (ansi "0.4.1") (lv "0.0"))
+;; Keywords: maint easky
 
 ;; This file is not part of GNU Emacs.
 
@@ -36,6 +36,7 @@
 (require 'frame)
 (require 'files)
 
+(require 'eask-mode)
 (require 'eask-api)
 (require 'eask-api-core)
 (require 'ansi)  ; we need `ansi' to run through Eask API
@@ -510,10 +511,16 @@ This can be replaced with `easky-package-install' command."
 "
                      package-name version description website keywords
                      entry-point emacs-version)))
-      (lv-message content)
-      (when (yes-or-no-p (format "About to write to %s:\n\nIs this Okay? " new-name))
-        (write-region content nil new-name))
-      (lv-delete-window))))
+      (lv-message (with-temp-buffer  ; colorized
+                    (insert content)
+                    (delay-mode-hooks (funcall #'eask-mode))
+                    (ignore-errors (font-lock-ensure))
+                    (buffer-string)))
+      (unwind-protect
+          (when (yes-or-no-p (format "About to write to %s:\n\nIs this Okay? " new-name))
+            (write-region content nil new-name)
+            (find-file new-name))
+        (lv-delete-window)))))
 
 ;;;###autoload
 (defun easky-run ()
