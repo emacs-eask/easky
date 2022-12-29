@@ -394,7 +394,7 @@ is the implementation."
 
 ;;;###autoload
 (defun easky-clean ()
-  "Start Eask."
+  "Start Eask clean."
   (interactive)
   (easky--exec-with-help
       "eask clean --help" 2 "Select `eask clean' command: "
@@ -402,7 +402,7 @@ is the implementation."
 
 ;;;###autoload
 (defun easky-lint ()
-  "Start Eask."
+  "Start Eask lint."
   (interactive)
   (easky--exec-with-help
       "eask lint --help" 2 "Select `eask lint' command: "
@@ -410,7 +410,7 @@ is the implementation."
 
 ;;;###autoload
 (defun easky-test ()
-  "Start Eask."
+  "Start Eask test."
   (interactive)
   (easky--exec-with-help
       "eask test --help" 2 "Select `eask test' command: "

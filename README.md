@@ -75,6 +75,15 @@ following:
 
 ## 📇 Support Commands
 
+All in one commands, these are commands we recommend you start with!
+
+| Commands      | Description                                          |
+|---------------|------------------------------------------------------|
+| `easky`       | Start Eask by selecting the through completion       |
+| `easky-clean` | Like `easky`, but show clean related commands instad |
+| `easky-lint`  | Like `easky`, but show lint related commands instad  |
+| `easky-test`  | Like `easky`, but show test related commands instad  |
+
 The following are the functions provided by `easky`, you can `M-x` with these
 commands:
 
