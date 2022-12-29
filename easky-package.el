@@ -92,8 +92,7 @@ The form UNWIND is use to revert package information."
            (easky--message-concat
             "No installed packges, try the following options:\n\n"
             "  [1] 'M-x easky-package-install'\n"
-            "  [2] Add dependencies to your Eask-file, and 'M-x easky-install-deps'"
-            ))))
+            "  [2] Add dependencies to your Eask-file, and 'M-x easky-install-deps'"))))
     ;; XXX: We revert information after it's done displaying!
     (add-hook 'package-menu-mode-hook #'easky-package--revert-info)))
 

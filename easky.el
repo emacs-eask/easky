@@ -6,7 +6,7 @@
 ;; Maintainer: Shen, Jen-Chieh <jcs090218@gmail.com>
 ;; URL: https://github.com/emacs-eask/easky
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "26.1") (eask-mode "0.1.0") (eask-api "0.1.0") (ansi "0.4.1") (lv "0.0"))
+;; Package-Requires: ((emacs "27.1") (eask-mode "0.1.0") (eask-api "0.1.0") (ansi "0.4.1") (lv "0.0"))
 ;; Keywords: maint easky
 
 ;; This file is not part of GNU Emacs.
@@ -92,6 +92,13 @@
   "Execute BODY without write it to message buffer."
   (declare (indent 0) (debug t))
   `(let (message-log-max) ,@body))
+
+(defun easky--completing-frame-offset (options)
+  "Return frame offset while `completing-read'.
+
+Argument OPTIONS ia an alist use to calculate the frame offset."
+  (max (eask-seq-str-max (mapcar #'cdr options))
+       (/ (frame-width) 2.5)))
 
 ;;
 ;; (@* "Compat" )
@@ -319,6 +326,97 @@ We use number to name our arguments, ARG0 and ARGS."
     (lv-delete-window)))
 
 ;;
+;; (@* "All in one commands" )
+;;
+
+(defun easky-parse-help-manual (help-cmd subcmd-index)
+  "Return an alist regarding help manual from HELP-CMD.
+
+Argument HELP-CMD is a string contain option `--help'.  SUBCMD-INDEX is the
+index to target subcommand.
+
+The format is in (command . description)."
+  (let ((manual (shell-command-to-string help-cmd))
+        (data))
+    (with-temp-buffer
+      (insert manual)
+      (goto-char (point-min))
+      (search-forward "Commands:")
+      (forward-line 1)
+      (while (not (string-empty-p (string-trim (thing-at-point 'line))))
+        (beginning-of-line)
+        (let ((command)
+              (description))
+          (forward-symbol (or subcmd-index 1))
+          (setq command (symbol-at-point))
+          (search-forward "  " (line-end-position))
+          (search-forward-regexp "[^ \t]" (line-end-position))
+          (let ((start (1- (point))))
+            (setq description (buffer-substring start (if (search-forward "  " (line-end-position) t)
+                                                          (point)
+                                                        (line-end-position)))))
+          (push (cons (eask-2str command) (string-trim description)) data))
+        (forward-line 1)))
+    (reverse data)))
+
+(defmacro easky--exec-with-help (help-cmd subcmd-index prompt &rest body)
+  "Execut command with help manual parsed.
+
+For arguments HELP-CMD and SUBCMD-INDEX, see function `easky-parse-help-manual'
+for more information.
+
+Argument PROMPT is the first prompt to show for the current help command.  BODY
+is the implementation."
+  (declare (indent 3) (debug t))
+  `(let* ((options (easky-parse-help-manual ,help-cmd ,subcmd-index))
+          (offset (easky--completing-frame-offset options))
+          (command (completing-read
+                    ,prompt
+                    (lambda (string predicate action)
+                      (if (eq action 'metadata)
+                          `(metadata
+                            (display-sort-function . ,#'identity)
+                            (annotation-function
+                             . ,(lambda (cand)
+                                  (concat (propertize " " 'display `((space :align-to (- right ,offset))))
+                                          (cdr (assoc cand options))))))
+                        (complete-with-action action options string predicate)))
+                    nil t)))
+     ,@body))
+
+;;;###autoload
+(defun easky ()
+  "Start Eask."
+  (interactive)
+  (easky--exec-with-help
+      "eask --help" 1 "Select `eask' command: "
+    (call-interactively (intern (format "easky-%s" command)))))
+
+;;;###autoload
+(defun easky-clean ()
+  "Start Eask."
+  (interactive)
+  (easky--exec-with-help
+      "eask clean --help" 2 "Select `eask clean' command: "
+    (call-interactively (intern (format "easky-clean-%s" command)))))
+
+;;;###autoload
+(defun easky-lint ()
+  "Start Eask."
+  (interactive)
+  (easky--exec-with-help
+      "eask lint --help" 2 "Select `eask lint' command: "
+    (call-interactively (intern (format "easky-lint-%s" command)))))
+
+;;;###autoload
+(defun easky-test ()
+  "Start Eask."
+  (interactive)
+  (easky--exec-with-help
+      "eask test --help" 2 "Select `eask test' command: "
+    (call-interactively (intern (format "easky-test-%s" command)))))
+
+;;
 ;; (@* "Commands" )
 ;;
 
@@ -335,17 +433,17 @@ Argument PROMPT is a string to ask the user regarding the file action.
 
 Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
   (declare (indent 1) (debug t))
-  `(let* ((max-len (max (eask-seq-str-max (mapcar #'cdr easky-exec-files-options))
-                        (/ (frame-width) 2.5)))
+  `(let* ((offset (easky--completing-frame-offset easky-exec-files-options))
           (option
            (completing-read
             ,prompt
             (lambda (string predicate action)
               (if (eq action 'metadata)
                   `(metadata
+                    (display-sort-function . ,#'identity)
                     (annotation-function
                      . ,(lambda (cand)
-                          (concat (propertize " " 'display `((space :align-to (- right ,max-len))))
+                          (concat (propertize " " 'display `((space :align-to (- right ,offset))))
                                   (cdr (assoc cand easky-exec-files-options))))))
                 (complete-with-action action easky-exec-files-options string predicate)))
             nil t nil nil (nth 0 easky-exec-files-options)))
@@ -528,17 +626,17 @@ This can be replaced with `easky-package-install' command."
   (interactive)
   (easky--setup
     (if eask-scripts
-        (let* ((max-len (max (eask-seq-str-max (mapcar #'cdr eask-scripts))
-                             (/ (frame-width) 2.5)))
+        (let* ((offset (easky--completing-frame-offset eask-scripts))
                (selected-script
                 (completing-read
                  "Run Eask's script: "
                  (lambda (string predicate action)
                    (if (eq action 'metadata)
                        `(metadata
+                         (display-sort-function . ,#'identity)
                          (annotation-function
                           . ,(lambda (cand)
-                               (concat (propertize " " 'display `((space :align-to (- right ,max-len))))
+                               (concat (propertize " " 'display `((space :align-to (- right ,offset))))
                                        (cdr (assoc cand eask-scripts))))))
                      (complete-with-action action eask-scripts string predicate)))
                  nil t)))
@@ -559,14 +657,8 @@ This can be replaced with `easky-package-install' command."
   (easky--display (easky-command "package" "--dest" dir)))
 
 ;;;###autoload
-(defun easky-upgrade ()
-  "Upgrade packages."
-  (interactive)
-  (easky--display (easky-command "upgrade")))
-
-;;;###autoload
 (defun easky-pkg-file ()
-  "Generate pkg-file and printed out!"
+  "Generate pkg-file and printed it out!"
   (interactive)
   (easky--display (easky-command "pkg-file")))
 
@@ -582,6 +674,12 @@ This can be replaced with `easky-package-install' command."
   (interactive)
   (easky--display (easky-command "outdated")))
 
+;;;###autoload
+(defun easky-upgrade-eask ()
+  "Upgrade Eask CLI."
+  (interactive)
+  (easky--display (easky-command "upgrade-eask")))
+
 ;;
 ;;; Eask-file Checker
 
@@ -596,12 +694,12 @@ This can be replaced with `easky-package-install' command."
 Arguments STRING, PREDICATE and ACTION are default value for collection
 argument."
   (if (eq action 'metadata)
-      (let ((max-len (max (eask-seq-str-max (mapcar #'cdr easky-check-eask-options))
-                          (/ (frame-width) 2.5))))
+      (let ((offset (easky--completing-frame-offset easky-check-eask-options)))
         `(metadata
+          (display-sort-function . ,#'identity)
           (annotation-function
            . ,(lambda (cand)
-                (concat (propertize " " 'display `((space :align-to (- right ,max-len))))
+                (concat (propertize " " 'display `((space :align-to (- right ,offset))))
                         (cdr (assoc cand easky-check-eask-options)))))))
     (complete-with-action action easky-check-eask-options string predicate)))
 
@@ -664,17 +762,17 @@ Argument PROMPT is a string to ask the user regarding the file action.
 
 Arguments FORM-1 and FORM-2 are execution by each file action."
   (declare (indent 1) (debug t))
-  `(let* ((max-len (max (eask-seq-str-max (mapcar #'cdr easky-exec-packages-options))
-                        (/ (frame-width) 2.5)))
+  `(let* ((offset (easky--completing-frame-offset easky-exec-packages-options))
           (option
            (completing-read
             ,prompt
             (lambda (string predicate action)
               (if (eq action 'metadata)
                   `(metadata
+                    (display-sort-function . ,#'identity)
                     (annotation-function
                      . ,(lambda (cand)
-                          (concat (propertize " " 'display `((space :align-to (- right ,max-len))))
+                          (concat (propertize " " 'display `((space :align-to (- right ,offset))))
                                   (cdr (assoc cand easky-exec-packages-options))))))
                 (complete-with-action action easky-exec-packages-options string predicate)))
             nil t nil nil (nth 0 easky-exec-packages-options)))
@@ -709,6 +807,15 @@ Arguments FORM-1 and FORM-2 are execution by each file action."
     (easky--display (easky-command "reinstall"))
     (let ((pattern (read-string "Specify packages: ")))
       (easky--display (easky-command "reinstall" pattern)))))
+
+;;;###autoload
+(defun easky-upgrade ()
+  "Upgrade packages."
+  (interactive)
+  (easky--exec-with-packages "Select `upgrade' action: "
+    (easky--display (easky-command "upgrade"))
+    (let ((pattern (read-string "Specify packages: ")))
+      (easky--display (easky-command "upgrade" pattern)))))
 
 ;;;###autoload
 (defun easky-install-deps ()

@@ -90,10 +90,14 @@ commands:
 | `eask-install`           | Install packages, see also `M-x easky-package-install`         |
 | `eask-uninstall`         | Untnstall packages, see also `M-x easky-package-delete`        |
 | `easky-reinstall`        | Reinstall packages, see also `M-x easky-package-reinstall`     |
+| `easky-upgrade`          | Upgrade packages., see also `M-x easky-package-update`         |
 | `easky-install-deps`     | Install all package dependencies                               |
 | `easky-install-deps-dev` | Like `easky-install-deps` but include development dependencies |
+| `easky-pkg-file`         | Generate pkg-file and printed it out!                          |
+| `easky-recipe`           | Recommend me a recipe format.                                  |
 | `easky-help`             | Print Eask help manual                                         |
 | `easky-version`          | Print Eask version                                             |
+| `easky-upgrade-eask`     | Upgrade Eask CLI                                               |
 
 ### 🧹 Cleaning
 

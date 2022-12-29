@@ -3,7 +3,7 @@
          "Control Eask in Emacs")
 
 (website-url "https://github.com/emacs-eask/easky")
-(keywords "lisp" "easky")
+(keywords "maint" "easky")
 
 (package-file "easky.el")
 (files "easky-*.el")
@@ -14,7 +14,7 @@
 (source "melpa")
 (source "jcs-elpa")
 
-(depends-on "emacs" "26.1")
+(depends-on "emacs" "27.1")
 (depends-on "eask-mode")
 (depends-on "eask-api")
 (depends-on "ansi")
