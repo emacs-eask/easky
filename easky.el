@@ -54,6 +54,11 @@
   :type 'string
   :group 'easky)
 
+(defcustom easky-strip-header t
+  "Remove output header while displaying."
+  :type 'boolean
+  :group 'easky)
+
 (defcustom easky-display-function #'lv-message
   "Function to display Easky's result."
   :type 'function
@@ -261,7 +266,9 @@ We use number to name our arguments, ARG0 and ARGS."
           (lv-first (not (window-live-p lv-wnd))))
       (insert output)
       (easky--ansi-color-apply-on-region start (point) t)  ; apply in buffer
-      (funcall easky-display-function (easky--strip-headers (buffer-string)))
+      (funcall easky-display-function (if easky-strip-header
+                                          (easky--strip-headers (buffer-string))
+                                        (buffer-string)))
       (when (easky-lv-message-p)
         ;; Apply color in lv buffer!
         (with-current-buffer (window-buffer lv-wnd)

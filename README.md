@@ -164,6 +164,7 @@ Sometimes you would want to execute some command directly!
 List of variables that interact with `easky`'s behaviour.
 
 - `easky-executable` - Executable to eask-cli. (Default: `nil`)
+- `easky-strip-header` -  output header while displaying. (Default: `t`)
 - `easky-display-function` - Function to display Easky's result. (Default: `#'lv-message`)
 - `easky-focus-p` - Select window after command execution. (Default: `nil`)
 - `easky-move-point-for-output` - Controls whether interpreter output moves point to the end of the output. (Default: `nil`)
