@@ -238,7 +238,7 @@ We use number to name our arguments, ARG0 and ARGS."
     "💡 `eask info` command prints out the package information!")
   "List of tips.")
 
-;; XXX: Some command can wait amount of time, display tip can help a little.
+;; XXX: Some commands can wait amount of time, display tip can help a little.
 (defun easky--pick-tips ()
   "Return a tip."
   (let ((index (random (length easky-tips))))

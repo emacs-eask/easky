@@ -181,7 +181,6 @@ WIP
 
 ## 🌟 Other packages you may be interested
 
-- [eask-mode](https://github.com/emacs-eask/eask-mode) - major mode for editing Eask files
 - [company-eask](https://github.com/emacs-eask/company-eask) - Company backend for Eask-file
 - [eldoc-eask](https://github.com/emacs-eask/eldoc-eask) - Eldoc support for Eask-file
 - [flycheck-eask](https://github.com/emacs-eask/flycheck-eask) - Eask support in Flycheck
