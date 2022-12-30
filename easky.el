@@ -232,7 +232,7 @@ We use number to name our arguments, ARG0 and ARGS."
   '("💡 Some commands may take longer time to complete..."
     "💡 Try 'M-x easky' to see all available commands!"
     "💡 Easky uses `marquee-header' to display tip and `lv' to display message"
-    "💡 The full output can be seen in the `*easky*' buffer; use `M-x switch-to-buffer` to see the result!"
+    "💡 The full output can be seen in the `*easky*' buffer; use `M-x easky-to-buffer` to see the result!"
     "💡 You can use `eask create' to create an Elisp project"
     "💡 Make sure you have all dependencies installed before you compile it!"
     "💡 `eask info` command prints out the package information!")
@@ -247,6 +247,15 @@ We use number to name our arguments, ARG0 and ARGS."
 ;;
 ;; (@* "Display" )
 ;;
+
+(defun easky-buffer ()
+  "Return easky buffer."
+  (get-buffer-create easky-buffer-name))
+
+(defun easky-to-buffer ()
+  "Display easky buffer."
+  (interactive)
+  (pop-to-buffer (easky-buffer) `((display-buffer-in-direction) (dedicated . t))))
 
 (defvar easky-process nil
   "Singleton process.")
@@ -312,7 +321,7 @@ We use number to name our arguments, ARG0 and ARGS."
   ;; XXX: Make sure we only have one process running!
   (unless easky-process
     (let ((prev-dir default-directory))
-      (with-current-buffer (get-buffer-create easky-buffer-name)
+      (with-current-buffer (easky-buffer)
         (setq default-directory prev-dir)  ; hold `default-directory'
         (buffer-disable-undo)
         (read-only-mode 1)
