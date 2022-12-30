@@ -85,7 +85,7 @@ The form UNWIND is use to revert package information."
         (if package-activated-list
             (package-show-package-list package-activated-list)
           (user-error
-           (easky--message-concat
+           (concat
             "No installed packges, try the following options:\n\n"
             "  [1] 'M-x easky-package-install'\n"
             "  [2] Add dependencies to your Eask-file, and 'M-x easky-install-deps'"))))
