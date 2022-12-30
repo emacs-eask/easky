@@ -398,7 +398,10 @@ is the implementation."
   (interactive)
   (easky--exec-with-help
       "eask clean --help" 2 "Select `eask clean' command: "
-    (call-interactively (intern (format "easky-clean-%s" command)))))
+    (let ((command (intern (format "easky-clean-%s" command))))
+      (if (fboundp command)
+          (call-interactively command)
+        (user-error "Command %s not implemented yet, please consider report it to us!" command)))))
 
 ;;;###autoload
 (defun easky-lint ()
@@ -406,7 +409,10 @@ is the implementation."
   (interactive)
   (easky--exec-with-help
       "eask lint --help" 2 "Select `eask lint' command: "
-    (call-interactively (intern (format "easky-lint-%s" command)))))
+    (let ((command (intern (format "easky-lint-%s" command))))
+      (if (fboundp command)
+          (call-interactively command)
+        (user-error "Command %s not implemented yet, please consider report it to us!" command)))))
 
 ;;;###autoload
 (defun easky-test ()
@@ -414,7 +420,10 @@ is the implementation."
   (interactive)
   (easky--exec-with-help
       "eask test --help" 2 "Select `eask test' command: "
-    (call-interactively (intern (format "easky-test-%s" command)))))
+    (let ((command (intern (format "easky-test-%s" command))))
+      (if (fboundp command)
+          (call-interactively command)
+        (user-error "Command %s not implemented yet, please consider report it to us!" command)))))
 
 ;;
 ;; (@* "Commands" )
@@ -655,6 +664,12 @@ This can be replaced with `easky-package-install' command."
   (interactive
    (list (read-directory-name "Destination: " nil nil nil "dist")))  ; default to dist
   (easky--display (easky-command "package" "--dest" dir)))
+
+;;;###autoload
+(defun easky-refresh ()
+  "Package your package to DIR."
+  (interactive)
+  (easky--display (easky-command "refresh")))
 
 ;;;###autoload
 (defun easky-pkg-file ()
