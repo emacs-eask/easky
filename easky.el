@@ -6,7 +6,7 @@
 ;; Maintainer: Shen, Jen-Chieh <jcs090218@gmail.com>
 ;; URL: https://github.com/emacs-eask/easky
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "27.1") (eask-mode "0.1.0") (eask-api "0.1.0") (ansi "0.4.1") (lv "0.0"))
+;; Package-Requires: ((emacs "27.1") (eask-mode "0.1.0") (eask-api "0.1.0") (ansi "0.4.1") (lv "0.0") (marquee-header "0.1.0"))
 ;; Keywords: maint easky
 
 ;; This file is not part of GNU Emacs.
@@ -41,6 +41,7 @@
 (require 'eask-api-core)
 (require 'ansi)  ; we need `ansi' to run through Eask API
 (require 'lv)
+(require 'marquee-header)
 
 (defgroup easky nil
   "Control Eask in Emacs."
@@ -71,6 +72,11 @@
 (defcustom easky-timeout-seconds 30
   "Timeout seconds for running too long process."
   :type 'number
+  :group 'easky)
+
+(defcustom easky-show-tip t
+  "If non-nil, show the tip in the lv window."
+  :type 'boolean
   :group 'easky)
 
 (defconst easky-buffer-name "*easky*"
@@ -209,6 +215,22 @@ We use number to name our arguments, ARG0 and ARGS."
                "  | eldoc-eask   | Eldoc support for Eask-file       | https://github.com/emacs-eask/eldoc-eask   |"))))))))
 
 ;;
+;; (@* "Tip" )
+;;
+
+(defconst easky-tips
+  '("Some commands may take longer time to complete..."
+    "Try 'M-x easky' to see all available commands!"
+    "Easky uses `marquee-header' to display tip and `lv' to display message")
+  "List of tips.")
+
+;; XXX: Some command can wait amount of time, display tip can help a little.
+(defun easky--pick-tips ()
+  "Return a tip."
+  (let ((index (random (length easky-tips))))
+    (nth index easky-tips)))
+
+;;
 ;; (@* "Display" )
 ;;
 
@@ -232,7 +254,8 @@ We use number to name our arguments, ARG0 and ARGS."
   (with-current-buffer (process-buffer proc)
     (goto-char (point-max))
     (let ((inhibit-read-only t)
-          (start (point)))
+          (start (point))
+          (lv-first (not (window-live-p lv-wnd))))
       (insert output)
       (easky--ansi-color-apply-on-region start (point) t)  ; apply in buffer
       (funcall easky-display-function (easky--strip-headers (buffer-string)))
@@ -240,6 +263,9 @@ We use number to name our arguments, ARG0 and ARGS."
         ;; Apply color in lv buffer!
         (with-current-buffer (window-buffer lv-wnd)
           (ansi-color-apply-on-region (point-min) (point-max)))
+        (when (and easky-show-tip lv-first)
+          (with-selected-window lv-wnd
+            (marquee-header-notify (easky--pick-tips) :loop t)))
         ;; Move to end of buffer!
         (when easky-move-point-for-output
           (with-selected-window lv-wnd

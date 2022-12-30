@@ -168,6 +168,7 @@ List of variables that interact with `easky`'s behaviour.
 - `easky-focus-p` - Select window after command execution. (Default: `nil`)
 - `easky-move-point-for-output` - Controls whether interpreter output moves point to the end of the output. (Default: `nil`)
 - `easky-timeout-seconds` - Timeout seconds for running too long process. (Default: `30`)
+- `easky-show-tip` - Weather to show tip on waiting the output buffer (Default: `t`)
 
 ## 🔌 Plugins
 
