@@ -84,10 +84,11 @@ M-x easky
 That's it! Then you should able to select the command you like to use through
 `completing-read`.
 
-There are conditions that may make `eask` not working:
+Some conditions may make Eask CLI unusable:
 
-1. Eask CLI is missing from your `PATH`, see also `eask-api-executable`
+1. `eask` is missing from your `PATH`, see also `eask-api-executable`
 2. You don't have an Eask-file in your project or current directory
+3. Invalid Eask-file (syntax error, invalid rules, etc)
 
 ## 📇 Support Commands
 

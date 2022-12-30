@@ -128,8 +128,8 @@ Arguments START, END and PRESERVE-SEQUENCES is the same to original function."
 ;; (@* "Core" )
 ;;
 
-(defun easky--valid-project-p (&optional path)
-  "Return t if PATH is a valid Eask project."
+(defun easky--valid-source-p (&optional path)
+  "Return t if PATH has a valid Eask-file"
   (let ((eask-api-strict-p)
         (default-directory (or path default-directory)))
     (eask-api-setup)))
@@ -182,22 +182,28 @@ We use number to name our arguments, ARG0 and ARGS."
        "  [2] You can manually set variable `eask-api-executable' to point to eask executable"
        "\n\nFor more information, find the manual at https://emacs-eask.github.io/")))
     ;; Invalid Eask Project!
-    ((not (easky--valid-project-p))
-     (user-error (concat
-                  "Error execute Easky command, invalid Eask project.\n\n"
-                  "  [1] Make sure you have a valid proejct-root\n"
-                  "  [2] Make sure you have Eask-file inside your project"
-                  "\n\nYou can creat Eask-file by doing 'M-x eask-init'")))
+    ((not (easky--valid-source-p))
+     (user-error
+      (concat
+       "Error execute Easky command, invalid Eask project.\n\n"
+       "  [1] Make sure you have a valid proejct-root\n"
+       "  [2] Make sure you have Eask-file inside your project"
+       "\n\nYou can creat Eask-file by doing 'M-x eask-init'")))
     ;; Okay! Good to go!
     (t (easky--setup-eask-env)
        (let* (eask--initialized-p
               easky--error-message  ; init error message
               (eask-lisp-root (eask-api-lisp-root))
+              (default-directory (plist-get (easky--valid-source-p) :root))
               (user-emacs-directory (expand-file-name (concat ".eask/" emacs-version "/")))
               (package-user-dir (expand-file-name "elpa" user-emacs-directory))
               (user-init-file (locate-user-emacs-file "init.el"))
               (custom-file (locate-user-emacs-file "custom.el"))
-              (package-activated-list))
+              (package-activated-list)  ; make sure package.el does not change
+              eask-depends-on-recipe-p  ; make sure github-elpa creates directory
+              (github-elpa-working-dir (expand-file-name "./temp-elpa/.working/" user-emacs-directory))
+              (github-elpa-archive-dir (expand-file-name "./temp-elpa/packages/" user-emacs-directory))
+              (github-elpa-recipes-dir (expand-file-name "./temp-elpa/recipes/" user-emacs-directory)))
          (easky--ignore-env
            (if (and (ignore-errors (easky-load-eask))  ; Error loading Eask file!
                     (not easky--error-message))        ; The message is stored here!
@@ -210,11 +216,12 @@ We use number to name our arguments, ARG0 and ARGS."
                "  [1] Lint your Eask-file with command `eask check-eask [EASK-FILE]`\n"
                "  [2] Make sure your Eask-file doesn't contain any invalid syntax"
                "\n\nHere are useful tools to help you edit Eask-file:\n\n"
-               "  | Package      | Description                       | Repository URL                             |\n"
-               "  | ------------ | --------------------------------- | ------------------------------------------ |\n"
-               "  | eask-mode    | major mode for editing Eask files | https://github.com/emacs-eask/eask-mode    |\n"
-               "  | company-eask | Company backend for Eask-file     | https://github.com/emacs-eask/company-eask |\n"
-               "  | eldoc-eask   | Eldoc support for Eask-file       | https://github.com/emacs-eask/eldoc-eask   |"))))))))
+               "  | Package       | Description                       | Repository URL                              |\n"
+               "  | ------------- | --------------------------------- | ------------------------------------------- |\n"
+               "  | company-eask  | Company backend for Eask-file     | https://github.com/emacs-eask/company-eask  |\n"
+               "  | eldoc-eask    | Eldoc support for Eask-file       | https://github.com/emacs-eask/eldoc-eask    |\n"
+               "  | flycheck-eask | Eask support in Flycheck          | https://github.com/emacs-eask/flycheck-eask |\n"
+               "  | flymake-eask  | Eask support in Flymake           | https://github.com/flymake/flymake-eask     |"))))))))
 
 ;;
 ;; (@* "Tip" )
