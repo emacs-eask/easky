@@ -84,6 +84,11 @@
   :type 'boolean
   :group 'easky)
 
+(defcustom easky-annotation-ratio 2.5
+  "Ratio align from the right to display `completin-read' annotation."
+  :type 'float
+  :group 'easky)
+
 (defconst easky-buffer-name "*easky*"
   "Buffer name for process file.")
 
@@ -109,7 +114,7 @@
 
 Argument OPTIONS ia an alist use to calculate the frame offset."
   (max (eask-seq-str-max (mapcar #'cdr options))
-       (/ (frame-width) 2.5)))
+       (/ (frame-width) easky-annotation-ratio)))
 
 ;;
 ;; (@* "Compat" )
@@ -229,7 +234,8 @@ We use number to name our arguments, ARG0 and ARGS."
     "💡 Easky uses `marquee-header' to display tip and `lv' to display message"
     "💡 The full output can be seen in the `*easky*' buffer; use `M-x switch-to-buffer` to see the result!"
     "💡 You can use `eask create' to create an Elisp project"
-    "💡 Make sure you have all dependencies installed before you compile it!")
+    "💡 Make sure you have all dependencies installed before you compile it!"
+    "💡 `eask info` command prints out the package information!")
   "List of tips.")
 
 ;; XXX: Some command can wait amount of time, display tip can help a little.
