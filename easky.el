@@ -219,9 +219,12 @@ We use number to name our arguments, ARG0 and ARGS."
 ;;
 
 (defconst easky-tips
-  '("Some commands may take longer time to complete..."
-    "Try 'M-x easky' to see all available commands!"
-    "Easky uses `marquee-header' to display tip and `lv' to display message")
+  '("💡 Some commands may take longer time to complete..."
+    "💡 Try 'M-x easky' to see all available commands!"
+    "💡 Easky uses `marquee-header' to display tip and `lv' to display message"
+    "💡 The full output can be seen in the `*easky*' buffer; use `M-x switch-to-buffer` to see the result!"
+    "💡 You can use `eask create' to create an Elisp project"
+    "💡 Make sure you have all dependencies installed before you compile it!")
   "List of tips.")
 
 ;; XXX: Some command can wait amount of time, display tip can help a little.
@@ -416,7 +419,10 @@ is the implementation."
   (interactive)
   (easky--exec-with-help
       "eask --help" 1 "Select `eask' command: "
-    (call-interactively (intern (format "easky-%s" command)))))
+    (let ((command (intern (format "easky-%s" command))))
+      (if (fboundp command)
+          (call-interactively command)
+        (user-error "Command %s not implemented yet, please consider report it to us!" command)))))
 
 ;;;###autoload
 (defun easky-clean ()
