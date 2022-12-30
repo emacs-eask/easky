@@ -36,9 +36,8 @@
   "Call FUNC interactively safely after checking the emacs VER."
   (if (version< emacs-version ver)
       (user-error
-       (easky--message-concat
-        (format "`%s' is not supported in your version of Emacs;" func)
-        (format "consider upgrading it to Emacs %s or later" ver)))
+       (concat (format "`%s' is not supported in your version of Emacs; " func)
+               (format "consider upgrading it to Emacs %s or later" ver)))
     (call-interactively func)))
 
 ;;

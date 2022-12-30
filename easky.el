@@ -49,11 +49,6 @@
   :group 'tool
   :link '(url-link :tag "Repository" "https://github.com/emacs-eask/easky"))
 
-(defcustom easky-executable nil
-  "Executable to eask-cli."
-  :type 'string
-  :group 'easky)
-
 (defcustom easky-strip-header t
   "Remove output header while displaying."
   :type 'boolean
@@ -133,10 +128,6 @@ Arguments START, END and PRESERVE-SEQUENCES is the same to original function."
 ;; (@* "Core" )
 ;;
 
-(defun easky--message-concat (&rest messages)
-  "Concatenate MESSAGES with space."
-  (mapconcat #'identity (cl-remove-if #'null messages) " "))
-
 (defun easky--valid-project-p (&optional path)
   "Return t if PATH is a valid Eask project."
   (let ((eask-api-strict-p)
@@ -183,16 +174,16 @@ We use number to name our arguments, ARG0 and ARGS."
   (declare (indent 0) (debug t))
   `(cond
     ;; Executable not found!
-    ((and (not (executable-find "eask")) (not easky-executable))
+    ((not (eask-api-executable))
      (user-error
-      (easky--message-concat
+      (concat
        "No executable named `eask` in the PATH environment, make sure:\n\n"
        "  [1] You have installed eask-cli and added to your PATH\n"
-       "  [2] You can manually set variable `easky-executable' to point to eask executable"
+       "  [2] You can manually set variable `eask-api-executable' to point to eask executable"
        "\n\nFor more information, find the manual at https://emacs-eask.github.io/")))
     ;; Invalid Eask Project!
     ((not (easky--valid-project-p))
-     (user-error (easky--message-concat
+     (user-error (concat
                   "Error execute Easky command, invalid Eask project.\n\n"
                   "  [1] Make sure you have a valid proejct-root\n"
                   "  [2] Make sure you have Eask-file inside your project"
@@ -201,6 +192,7 @@ We use number to name our arguments, ARG0 and ARGS."
     (t (easky--setup-eask-env)
        (let* (eask--initialized-p
               easky--error-message  ; init error message
+              (eask-lisp-root (eask-api-lisp-root))
               (user-emacs-directory (expand-file-name (concat ".eask/" emacs-version "/")))
               (package-user-dir (expand-file-name "elpa" user-emacs-directory))
               (user-init-file (locate-user-emacs-file "init.el"))
@@ -211,7 +203,7 @@ We use number to name our arguments, ARG0 and ARGS."
                     (not easky--error-message))        ; The message is stored here!
                (progn ,@body)
              (user-error
-              (easky--message-concat
+              (concat
                (when (stringp easky--error-message)
                  (format "[ERROR] %s\n\n" easky--error-message))
                "Error loading Eask-file, few suggestions: \n\n"
@@ -526,7 +518,7 @@ Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
   "Form command string.
 
 Rest argument ARGS is the Eask's CLI arguments."
-  (concat (or easky-executable "eask") " "
+  (concat (or eask-api-executable "eask") " "
           (mapconcat #'shell-quote-argument args " ")))
 
 ;;;###autoload
@@ -624,9 +616,9 @@ This can be replaced with `easky-package-install' command."
          (base-name)
          (invalid-name))
     (when (and files
-               (yes-or-no-p (easky--message-concat "Eask-file already exist,\n\n  "
-                                                   (mapconcat #'identity files "\n   ")
-                                                   "\n\nContinue the creation? ")))
+               (yes-or-no-p (concat "Eask-file already exist,\n\n  "
+                                    (mapconcat #'identity files "\n  ")
+                                    "\n\nContinue the creation? ")))
       (while (or (file-exists-p new-name) invalid-name)
         (setq new-name (read-file-name
                         (format
@@ -704,7 +696,7 @@ This can be replaced with `easky-package-install' command."
                      (complete-with-action action eask-scripts string predicate)))
                  nil t)))
           (easky--display (easky-command "run" selected-script)))
-      (message (easky--message-concat
+      (message (concat
                 "Not finding any script to run, you can add one by adding the line below to your Eask-file:\n\n"
                 "  (script \"test\" \"echo Hi!~\")"
                 "\n\nThen re-run this command once again!")))))

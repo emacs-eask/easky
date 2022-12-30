@@ -22,7 +22,7 @@ Easky is out of the box and comes along with many features.
 |---------------------------------|-----------------------------------|
 | ![checkdoc](./etc/checkdoc.png) | ![buttercup](./etc/buttercup.png) |
 
-## 🔰 Getting Started
+## 💾 Installation
 
 ### 🔍 Step 1. Install [Eask CLI](https://github.com/emacs-eask/cli)
 
@@ -72,6 +72,22 @@ following:
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 (require 'easky)
 ```
+
+## 🔰 Quick start
+
+The easiest to use this package, do:
+
+```
+M-x easky
+```
+
+That's it! Then you should able to select the command you like to use through
+`completing-read`.
+
+There are conditions that may make `eask` not working:
+
+1. Eask CLI is missing from your `PATH`, see also `eask-api-executable`
+2. You don't have an Eask-file in your project or current directory
 
 ## 📇 Support Commands
 
@@ -163,7 +179,6 @@ Sometimes you would want to execute some command directly!
 
 List of variables that interact with `easky`'s behaviour.
 
-- `easky-executable` - Executable to eask-cli. (Default: `nil`)
 - `easky-strip-header` -  output header while displaying. (Default: `t`)
 - `easky-display-function` - Function to display Easky's result. (Default: `#'lv-message`)
 - `easky-focus-p` - Select window after command execution. (Default: `nil`)
