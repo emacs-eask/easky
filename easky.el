@@ -185,9 +185,9 @@ We use number to name our arguments, ARG0 and ARGS."
     ((not (easky--valid-source-p))
      (user-error
       (concat
-       "Error execute Easky command, invalid Eask project.\n\n"
+       "Error execute Easky command, invalid Eask source:\n\n"
        "  [1] Make sure you have a valid proejct-root\n"
-       "  [2] Make sure you have Eask-file inside your project"
+       "  [2] Make sure you have Eask-file inside your project or current directory"
        "\n\nYou can creat Eask-file by doing 'M-x eask-init'")))
     ;; Okay! Good to go!
     (t (easky--setup-eask-env)
