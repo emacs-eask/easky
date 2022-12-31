@@ -122,8 +122,8 @@ Arguments START, END and PRESERVE-SEQUENCES is the same to original function."
 ;; (@* "Core" )
 ;;
 
-(defun easky--valid-source-p (&optional path)
-  "Return t if PATH has a valid Eask-file"
+(defun easky--valid-source (&optional path)
+  "Return t if PATH has a valid Eask-file."
   (when-let* ((files (eask--find-files (or path default-directory)))
               (file (car files)))
     file))
@@ -176,7 +176,7 @@ We use number to name our arguments, ARG0 and ARGS."
        "  [2] You can manually set variable `eask-api-executable' to point to eask executable"
        "\n\nFor more information, find the manual at https://emacs-eask.github.io/")))
     ;; Invalid Eask Project!
-    ((not (easky--valid-source-p))
+    ((not (easky--valid-source))
      (user-error
       (concat
        "Error execute Easky command, invalid Eask source:\n\n"
@@ -188,7 +188,7 @@ We use number to name our arguments, ARG0 and ARGS."
        (let* (eask--initialized-p
               easky--error-message  ; init error message
               (eask-lisp-root (eask-api-lisp-root))
-              (default-directory (file-name-directory (easky--valid-source-p)))
+              (default-directory (file-name-directory (easky--valid-source)))
               (user-emacs-directory (expand-file-name (concat ".eask/" emacs-version "/")))
               (package-user-dir (expand-file-name "elpa" user-emacs-directory))
               (user-init-file (locate-user-emacs-file "init.el"))
