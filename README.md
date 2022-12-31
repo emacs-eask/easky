@@ -45,7 +45,7 @@ This package is available from [JCS-ELPA](https://jcs-emacs.github.io/jcs-elpa/)
 Install from these repositories then you should be good to go!
 
 Normally, you don't need to add `(require 'easky)` to your configuration since
-most `easky` commands are autoloads and can be called without loading the module!
+most `easky` commands are autoload and can be called without loading the module!
 
 #### use-package
 
@@ -123,6 +123,7 @@ commands:
 | `easky-help`         | Print Eask help manual                                     |
 | `easky-version`      | Print Eask version                                         |
 | `easky-upgrade-eask` | Upgrade Eask CLI                                           |
+| `easky-stop`         | Terminate the current process                              |
 
 ### 🧹 Cleaning
 
