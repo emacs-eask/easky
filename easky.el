@@ -90,14 +90,6 @@
 (defvar easky--timeout-timer nil)
 
 ;;
-;; (@* "Externals" )
-;;
-
-(defvar github-elpa-working-dir)
-(defvar github-elpa-archive-dir)
-(defvar github-elpa-recipes-dir)
-
-;;
 ;; (@* "Util" )
 ;;
 
@@ -134,7 +126,7 @@ Arguments START, END and PRESERVE-SEQUENCES is the same to original function."
   "Return t if PATH has a valid Eask-file"
   (let ((eask-api-strict-p)
         (default-directory (or path default-directory)))
-    (eask-api-setup)))
+    (car (eask-api-setup))))
 
 (defvar easky--error-message nil
   "Set to non-nil when error occurs while loading Eask-file.")
@@ -196,16 +188,12 @@ We use number to name our arguments, ARG0 and ARGS."
        (let* (eask--initialized-p
               easky--error-message  ; init error message
               (eask-lisp-root (eask-api-lisp-root))
-              (default-directory (plist-get (easky--valid-source-p) :root))
+              (default-directory (file-name-directory (easky--valid-source-p)))
               (user-emacs-directory (expand-file-name (concat ".eask/" emacs-version "/")))
               (package-user-dir (expand-file-name "elpa" user-emacs-directory))
               (user-init-file (locate-user-emacs-file "init.el"))
               (custom-file (locate-user-emacs-file "custom.el"))
-              (package-activated-list)  ; make sure package.el does not change
-              eask-depends-on-recipe-p  ; make sure github-elpa creates directory
-              (github-elpa-working-dir (expand-file-name "./temp-elpa/.working/" user-emacs-directory))
-              (github-elpa-archive-dir (expand-file-name "./temp-elpa/packages/" user-emacs-directory))
-              (github-elpa-recipes-dir (expand-file-name "./temp-elpa/recipes/" user-emacs-directory)))
+              (package-activated-list))  ; make sure package.el does not change
          (easky--ignore-env
            (if (and (ignore-errors (easky-load-eask))  ; Error loading Eask file!
                     (not easky--error-message))        ; The message is stored here!
@@ -620,7 +608,7 @@ This can be replaced with `easky-package-install' command."
   (interactive
    (list (read-directory-name "Where you want to place your Eask-file: ")))
   (let* ((eask-api-strict-p)  ; disable strict
-         (files (eask-api-files dir))
+         (files (eask--find-files dir))
          (new-name (expand-file-name "Eask"))
          (base-name)
          (invalid-name))
