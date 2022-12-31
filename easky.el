@@ -124,9 +124,9 @@ Arguments START, END and PRESERVE-SEQUENCES is the same to original function."
 
 (defun easky--valid-source-p (&optional path)
   "Return t if PATH has a valid Eask-file"
-  (let ((eask-api-strict-p)
-        (default-directory (or path default-directory)))
-    (car (eask-api-setup))))
+  (when-let* ((files (eask--find-files (or path default-directory)))
+              (file (car files)))
+    file))
 
 (defvar easky--error-message nil
   "Set to non-nil when error occurs while loading Eask-file.")
@@ -180,8 +180,8 @@ We use number to name our arguments, ARG0 and ARGS."
      (user-error
       (concat
        "Error execute Easky command, invalid Eask source:\n\n"
-       "  [1] Make sure you have a valid proejct-root\n"
-       "  [2] Make sure you have Eask-file inside your project or current directory"
+       "  [1] Make sure you have a valid Eask-file in your current workspace\n"
+       "  [2] Make sure you have Eask-file in upper directory"
        "\n\nYou can creat Eask-file by doing 'M-x eask-init'")))
     ;; Okay! Good to go!
     (t (easky--setup-eask-env)
@@ -607,8 +607,7 @@ This can be replaced with `easky-package-install' command."
   "Initialize Eask-file in DIR."
   (interactive
    (list (read-directory-name "Where you want to place your Eask-file: ")))
-  (let* ((eask-api-strict-p)  ; disable strict
-         (files (eask--find-files dir))
+  (let* ((files (eask--find-files dir))
          (new-name (expand-file-name "Eask"))
          (base-name)
          (invalid-name))
