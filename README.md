@@ -162,7 +162,7 @@ Commands to help you test your packages:
 | `easky-test-ert-runner` | Run ert test through `ert-runner` |
 | `easky-test-buttercup`  | Run buttercup tests               |
 
-> 💡 These extenral tools are automatically installed in your sandbox!
+> 💡 These external tools are automatically installed in your sandbox!
 
 ### 💻 Direct execution
 
@@ -193,7 +193,7 @@ List of variables that interact with `easky`'s behaviour.
 
 ### 📦 `package` module
 
-WIP
+package module extends `package.el`
 
 ## 🌟 Other packages you may be interested
 
