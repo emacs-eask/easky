@@ -29,6 +29,14 @@
 (require 'easky)
 
 ;;
+;; (@* "Externals" )
+;;
+
+(defvar github-elpa-working-dir)
+(defvar github-elpa-archive-dir)
+(defvar github-elpa-recipes-dir)
+
+;;
 ;; (@* "Compat" )
 ;;
 

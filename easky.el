@@ -93,7 +93,6 @@
 ;; (@* "Externals" )
 ;;
 
-(defvar eask-api-strict-p)
 (defvar github-elpa-working-dir)
 (defvar github-elpa-archive-dir)
 (defvar github-elpa-recipes-dir)
