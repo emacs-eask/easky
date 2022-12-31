@@ -104,26 +104,25 @@ All in one commands, these are commands we recommend you start with!
 The following are the functions provided by `easky`, you can `M-x` with these
 commands:
 
-| Commands                 | Description                                                    |
-|--------------------------|----------------------------------------------------------------|
-| `easky-init`             | Create Eask-file and initialize it                             |
-| `easky-info`             | Print Eask-file information                                    |
-| `easky-locate`           | Print Eask installed location                                  |
-| `easky-files`            | List all package files.                                        |
-| `easky-archives`         | List in used archives                                          |
-| `easky-run`              | Execute Eask's script (with completion)                        |
-| `easky-package`          | Package (build) your package                                   |
-| `eask-install`           | Install packages, see also `M-x easky-package-install`         |
-| `eask-uninstall`         | Untnstall packages, see also `M-x easky-package-delete`        |
-| `easky-reinstall`        | Reinstall packages, see also `M-x easky-package-reinstall`     |
-| `easky-upgrade`          | Upgrade packages., see also `M-x easky-package-update`         |
-| `easky-install-deps`     | Install all package dependencies                               |
-| `easky-install-deps-dev` | Like `easky-install-deps` but include development dependencies |
-| `easky-pkg-file`         | Generate pkg-file and printed it out!                          |
-| `easky-recipe`           | Recommend me a recipe format.                                  |
-| `easky-help`             | Print Eask help manual                                         |
-| `easky-version`          | Print Eask version                                             |
-| `easky-upgrade-eask`     | Upgrade Eask CLI                                               |
+| Commands             | Description                                                |
+|----------------------|------------------------------------------------------------|
+| `easky-init`         | Create Eask-file and initialize it                         |
+| `easky-info`         | Print Eask-file information                                |
+| `easky-locate`       | Print Eask installed location                              |
+| `easky-files`        | List all package files.                                    |
+| `easky-archives`     | List in used archives                                      |
+| `easky-run`          | Execute Eask's script (with completion)                    |
+| `easky-package`      | Package (build) your package                               |
+| `eask-install`       | Install packages, see also `M-x easky-package-install`     |
+| `eask-uninstall`     | Untnstall packages, see also `M-x easky-package-delete`    |
+| `easky-reinstall`    | Reinstall packages, see also `M-x easky-package-reinstall` |
+| `easky-upgrade`      | Upgrade packages., see also `M-x easky-package-update`     |
+| `easky-install-deps` | Install all package dependencies                           |
+| `easky-pkg-file`     | Generate pkg-file and printed it out!                      |
+| `easky-recipe`       | Recommend me a recipe format.                              |
+| `easky-help`         | Print Eask help manual                                     |
+| `easky-version`      | Print Eask version                                         |
+| `easky-upgrade-eask` | Upgrade Eask CLI                                           |
 
 ### 🧹 Cleaning
 

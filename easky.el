@@ -90,6 +90,14 @@
 (defvar easky--timeout-timer nil)
 
 ;;
+;; (@* "Externals" )
+;;
+
+(defvar github-elpa-working-dir)
+(defvar github-elpa-archive-dir)
+(defvar github-elpa-recipes-dir)
+
+;;
 ;; (@* "Util" )
 ;;
 
@@ -193,6 +201,10 @@ We use number to name our arguments, ARG0 and ARGS."
               (package-user-dir (expand-file-name "elpa" user-emacs-directory))
               (user-init-file (locate-user-emacs-file "init.el"))
               (custom-file (locate-user-emacs-file "custom.el"))
+              eask-depends-on-recipe-p  ; make sure github-elpa creates directory
+              (github-elpa-working-dir (expand-file-name "./temp-elpa/.working/" user-emacs-directory))
+              (github-elpa-archive-dir (expand-file-name "./temp-elpa/packages/" user-emacs-directory))
+              (github-elpa-recipes-dir (expand-file-name "./temp-elpa/recipes/" user-emacs-directory))
               (package-activated-list))  ; make sure package.el does not change
          (easky--ignore-env
            (if (and (ignore-errors (easky-load-eask))  ; Error loading Eask file!
@@ -303,10 +315,7 @@ We use number to name our arguments, ARG0 and ARGS."
 
 (defun easky--output-buffer (cmd)
   "Output CMD to buffer."
-  (when (and easky-process
-             (yes-or-no-p "Easky is still busy, kill it anyway? "))
-    (delete-process easky-process)
-    (setq easky-process nil))
+  (easky-stop)
   ;; XXX: Make sure we only have one process running!
   (unless easky-process
     (let ((prev-dir default-directory))
@@ -337,6 +346,18 @@ We use number to name our arguments, ARG0 and ARGS."
              easky-timeout-seconds)
     (kill-process easky-process)
     (setq easky-process nil)))
+
+(defun easky-stop ()
+  "Stop Easky process."
+  (interactive)
+  (when (and easky-process
+             (yes-or-no-p "Easky is still busy, kill it anyway? "))
+    (delete-process easky-process)
+    (setq easky-process nil)
+    (when (easky-lv-message-p)
+      (remove-hook 'pre-command-hook #'easky--pre-command-once)
+      (remove-hook 'post-command-hook #'easky--post-command-once)
+      (lv-delete-window))))
 
 (defun easky-lv-message-p ()
   "Return t if using lv to display message."
@@ -516,7 +537,7 @@ Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
 
 Rest argument ARGS is the Eask's CLI arguments."
   (concat (or eask-api-executable "eask") " "
-          (mapconcat #'shell-quote-argument args " ")))
+          (mapconcat #'shell-quote-argument (cl-remove-if #'null args) " ")))
 
 ;;;###autoload
 (defun easky-help ()
@@ -878,13 +899,11 @@ Arguments FORM-1 and FORM-2 are execution by each file action."
 (defun easky-install-deps ()
   "Update all packages from Eask sandbox."
   (interactive)
-  (easky--display (easky-command "install-deps")))
-
-;;;###autoload
-(defun easky-install-deps-dev ()
-  "Update all packages from Eask sandbox."
-  (interactive)
-  (easky--display (easky-command "install-deps" "--dev")))
+  (let ((install-dev (completing-read
+                      "Install development dependencies? "
+                      '("Yes" "No") nil t nil nil "No")))
+    (easky--display (easky-command "install-deps" (when (string= install-dev "Yes")
+                                                    "--dev")))))
 
 ;;
 ;;; Cleaning
