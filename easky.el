@@ -279,19 +279,30 @@ We use number to name our arguments, ARG0 and ARGS."
     (goto-char (point-max))
     (let ((inhibit-read-only t)
           (start (point))
-          (lv-first (not (window-live-p lv-wnd))))
+          (lv-first (not (window-live-p lv-wnd)))
+          content)
       (insert output)
       (easky--ansi-color-apply-on-region start (point) t)  ; apply in buffer
-      (funcall easky-display-function (if easky-strip-header
-                                          (easky--strip-headers (buffer-string))
-                                        (buffer-string)))
+      (setq content (if easky-strip-header
+                        (easky--strip-headers (buffer-string))
+                      (buffer-string)))
+      (funcall easky-display-function content)
       (when (easky-lv-message-p)
         ;; Apply color in lv buffer!
         (with-current-buffer (window-buffer lv-wnd)
           (ansi-color-apply-on-region (point-min) (point-max)))
+        ;; Variable `lv-first' will prevent display different on every flush!
         (when (and easky-show-tip lv-first)
           (with-selected-window lv-wnd
-            (marquee-header-notify (easky--pick-tips) :loop t)))
+            (marquee-header-notify (easky--pick-tips) :loop t)
+            ;; XXX: The `header-line-format' will actually block the first line
+            ;; of the content. It's okay since most commands have the output
+            ;; more than one line. Except command `easky-version' only outputs
+            ;; one line information (it only prints version number). Then it
+            ;; will be blocked entirely!
+            ;;
+            ;; This line redisplays, and re-fit the window once again.
+            (lv-message content)))
         ;; Move to end of buffer!
         (when easky-move-point-for-output
           (with-selected-window lv-wnd
