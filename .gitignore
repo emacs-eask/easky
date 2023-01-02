@@ -2,6 +2,9 @@
 /.git
 /recipes
 
+# ignore log files
+/.log
+
 # ignore generated files
 *.elc
 
