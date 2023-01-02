@@ -468,6 +468,17 @@ is the implementation."
         (user-error "Command %s not implemented yet, please consider report it to us!" command)))))
 
 ;;;###autoload
+(defun easky-create ()
+  "Start Eask create."
+  (interactive)
+  (easky--exec-with-help
+      "eask create --help" 2 "Select `eask create' command: "
+    (let ((command (intern (format "easky-create-%s" command))))
+      (if (fboundp command)
+          (call-interactively command)
+        (user-error "Command %s not implemented yet, please consider report it to us!" command)))))
+
+;;;###autoload
 (defun easky-clean ()
   "Start Eask clean."
   (interactive)
@@ -926,6 +937,25 @@ Arguments FORM-1 and FORM-2 are execution by each file action."
                       '("Yes" "No") nil t nil nil "No")))
     (easky--display (easky-command "install-deps" (when (string= install-dev "Yes")
                                                     "--dev")))))
+
+;;
+;;; Create
+
+;;;###autoload
+(defun easky-create-package ()
+  "Create a new elisp package."
+  (interactive)
+  (user-error
+   (concat "This command is currently not supported; please use the command line "
+           "with the command `eask create package`!")))
+
+;;;###autoload
+(defun easky-create-elpa ()
+  "Create a new ELPA using github-elpa."
+  (interactive)
+  (user-error
+   (concat "This command is currently not supported; please use the command line "
+           "with the command `eask create elpa`!")))
 
 ;;
 ;;; Cleaning
