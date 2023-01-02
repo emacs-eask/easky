@@ -104,26 +104,26 @@ All in one commands, these are commands we recommend you start with!
 The following are the functions provided by `easky`, you can `M-x` with these
 commands:
 
-| Commands             | Description                                                |
-|----------------------|------------------------------------------------------------|
-| `easky-init`         | Create Eask-file and initialize it                         |
-| `easky-info`         | Print Eask-file information                                |
-| `easky-locate`       | Print Eask installed location                              |
-| `easky-files`        | List all package files.                                    |
-| `easky-archives`     | List in used archives                                      |
-| `easky-run`          | Execute Eask's script (with completion)                    |
-| `easky-package`      | Package (build) your package                               |
-| `eask-install`       | Install packages, see also `M-x easky-package-install`     |
-| `eask-uninstall`     | Untnstall packages, see also `M-x easky-package-delete`    |
-| `easky-reinstall`    | Reinstall packages, see also `M-x easky-package-reinstall` |
-| `easky-upgrade`      | Upgrade packages., see also `M-x easky-package-update`     |
-| `easky-install-deps` | Install all package dependencies                           |
-| `easky-pkg-file`     | Generate pkg-file and printed it out!                      |
-| `easky-recipe`       | Recommend me a recipe format.                              |
-| `easky-help`         | Print Eask help manual                                     |
-| `easky-version`      | Print Eask version                                         |
-| `easky-upgrade-eask` | Upgrade Eask CLI                                           |
-| `easky-stop`         | Terminate the current process                              |
+| Commands             | Description                                            |
+|----------------------|--------------------------------------------------------|
+| `easky-init`         | Create Eask-file and initialize it                     |
+| `easky-info`         | Print Eask-file information                            |
+| `easky-locate`       | Print Eask installed location                          |
+| `easky-files`        | List all package files.                                |
+| `easky-archives`     | List in used archives                                  |
+| `easky-run`          | Execute Eask's script (with completion)                |
+| `easky-package`      | Package (build) your package                           |
+| `easky-install`      | Install packages, see also `easky-package-install`     |
+| `easky-uninstall`    | Untnstall packages, see also `easky-package-delete`    |
+| `easky-reinstall`    | Reinstall packages, see also `easky-package-reinstall` |
+| `easky-upgrade`      | Upgrade packages., see also `easky-package-update`     |
+| `easky-install-deps` | Install all package dependencies                       |
+| `easky-pkg-file`     | Generate pkg-file and printed it out!                  |
+| `easky-recipe`       | Recommend me a recipe format.                          |
+| `easky-help`         | Print Eask help manual                                 |
+| `easky-version`      | Print Eask version                                     |
+| `easky-upgrade-eask` | Upgrade Eask CLI                                       |
+| `easky-stop`         | Terminate the current process                          |
 
 ### 🧹 Cleaning
 
@@ -197,7 +197,22 @@ List of variables that interact with `easky`'s behaviour.
 
 ### 📦 `package` module
 
-package module extends `package.el`
+package module extends `package.el` so you can manage your package dependencies
+(from sandbox) through `package.el`.
+
+| Commands                         | Description                                             |
+|----------------------------------|---------------------------------------------------------|
+| `easky-package-refresh-contents` | Extends `package-refresh-contents`                      |
+| `easky-list-packages`            | Extends `list-packages`                                 |
+| `easky-list-installed-packages`  | List installed packages                                 |
+| `easky-package-install`          | Extends `package-install`, see also `easky-install`     |
+| `easky-package-delete`           | Extends `package-delete`, see also `easky-uninstall`    |
+| `easky-package-reinstall`        | Extends `package-reinstall`, see also `easky-reinstall` |
+| `easky-package-recompile`        | Extends `package-recompile`                             |
+| `easky-package-recompile-all`    | Extends `package-recompile-all`                         |
+| `easky-describe-package`         | Extends `describe-package`                              |
+| `easky-package-update`           | Extends `package-update`                                |
+| `easky-package-update-all`       | Extends `package-update-all`                            |
 
 ## 🌟 Other packages you may be interested
 
