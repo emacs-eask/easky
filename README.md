@@ -200,19 +200,19 @@ List of variables that interact with `easky`'s behaviour.
 package module extends `package.el` so you can manage your package dependencies
 (from sandbox) through `package.el`.
 
-| Commads                          | Description                                                  | Notes        |
-|----------------------------------|--------------------------------------------------------------|--------------|
-| `easky-package-refresh-contents` | Extends `package-refresh-contents`, see alsp `easky-refresh` |              |
-| `easky-list-packages`            | Extends `list-packages`                                      |              |
-| `easky-list-installed-packages`  | List installed packages                                      |              |
-| `easky-package-install`          | Extends `package-install`, see also `easky-install`          |              |
-| `easky-package-delete`           | Extends `package-delete`, see also `easky-uninstall`         |              |
-| `easky-package-reinstall`        | Extends `package-reinstall`, see also `easky-reinstall`      |              |
-| `easky-package-recompile`        | Extends `package-recompile`                                  | Require 29.1 |
-| `easky-package-recompile-all`    | Extends `package-recompile-all`                              | Require 29.1 |
-| `easky-describe-package`         | Extends `describe-package`                                   |              |
-| `easky-package-update`           | Extends `package-update`                                     | Require 29.1 |
-| `easky-package-update-all`       | Extends `package-update-all`                                 | Require 29.1 |
+| Commads                          | Description                                                  |
+|----------------------------------|--------------------------------------------------------------|
+| `easky-package-refresh-contents` | Extends `package-refresh-contents`, see alsp `easky-refresh` |
+| `easky-list-packages`            | Extends `list-packages`                                      |
+| `easky-list-installed-packages`  | List installed packages                                      |
+| `easky-package-install`          | Extends `package-install`, see also `easky-install`          |
+| `easky-package-delete`           | Extends `package-delete`, see also `easky-uninstall`         |
+| `easky-package-reinstall`        | Extends `package-reinstall`, see also `easky-reinstall`      |
+| `easky-package-recompile`        | Extends `package-recompile`                                  |
+| `easky-package-recompile-all`    | Extends `package-recompile-all`                              |
+| `easky-describe-package`         | Extends `describe-package`                                   |
+| `easky-package-update`           | Extends `package-update`                                     |
+| `easky-package-update-all`       | Extends `package-update-all`                                 |
 
 ## 🌟 Other packages you may be interested
 
