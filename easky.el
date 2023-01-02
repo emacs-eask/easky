@@ -230,7 +230,7 @@ We use number to name our arguments, ARG0 and ARGS."
 ;;
 
 (defconst easky-tips
-  '("💡 Some commands may take longer time to complete..."
+  '("💡 Some commands may take longer time to complete; raise the timeout if needed `easky-timeout-seconds'? (Default: 30s)"
     "💡 Try 'M-x easky' to see all available commands!"
     "💡 Easky uses `marquee-header' to display tip and `lv' to display message"
     "💡 The full output can be seen in the `*easky*' buffer; use `M-x easky-to-buffer` to see the result!"
@@ -565,13 +565,13 @@ Rest argument ARGS is the Eask's CLI arguments."
 (defun easky-help ()
   "Print Eask help manual."
   (interactive)
-  (easky--display (easky-command "--help")))
+  (easky--output-buffer (easky-command "--help")))
 
 ;;;###autoload
 (defun easky-version ()
   "Print Eask version."
   (interactive)
-  (easky--display (easky-command "--version")))
+  (easky--output-buffer (easky-command "--version")))
 
 ;;;###autoload
 (defun easky-info ()
@@ -583,7 +583,7 @@ Rest argument ARGS is the Eask's CLI arguments."
 (defun easky-locate ()
   "Print Eask installed location."
   (interactive)
-  (easky--display (easky-command "locate")))
+  (easky--output-buffer (easky-command "locate")))
 
 ;;;###autoload
 (defun easky-compile ()
