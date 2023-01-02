@@ -81,7 +81,7 @@ The easiest to use this package, do:
 M-x easky
 ```
 
-That's it! Then you should able to select the command you like to use through
+That's it! Then you should be able to select the command you like to use through
 `completing-read`.
 
 Some conditions may make Eask CLI unusable:
