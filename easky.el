@@ -605,13 +605,11 @@ This can be replaced with `easky-package-install' command."
 (defun easky-archives ()
   "Print used archives."
   (interactive)
-  (easky--display (easky-command "archives")))
-
-;;;###autoload
-(defun easky-archives-all ()
-  "Print available archives."
-  (interactive)
-  (easky--display (easky-command "archives" "--all")))
+  (let ((all (completing-read
+              "List all available archives? (yes or no) "
+              '("Yes" "No") nil t nil nil "No")))
+    (easky--display (easky-command "archives"
+                                   (when (string= all "Yes") "--all")))))
 
 ;;;###autoload
 (defun easky-keywords ()
@@ -746,6 +744,12 @@ This can be replaced with `easky-package-install' command."
   (easky--display (easky-command "refresh")))
 
 ;;;###autoload
+(defun easky-autoloads ()
+  "Generate autloads file."
+  (interactive)
+  (easky--display (easky-command "autoloads")))
+
+;;;###autoload
 (defun easky-pkg-file ()
   "Generate pkg-file and printed it out!"
   (interactive)
@@ -836,6 +840,13 @@ Argument ACTION is used to select checker's action."
    (list (read-string "eask emacs ")))
   (easky--display (easky-command "emacs" args)))
 
+;;;###autoload
+(defun easky-eval (args)
+  "Run eask eval with ARGS."
+  (interactive
+   (list (read-string "eask eval ")))
+  (easky--display (easky-command "eval" args)))
+
 ;;
 ;;; Install
 
@@ -911,7 +922,7 @@ Arguments FORM-1 and FORM-2 are execution by each file action."
   "Update all packages from Eask sandbox."
   (interactive)
   (let ((install-dev (completing-read
-                      "Install development dependencies? "
+                      "Install development dependencies? (yes or no) "
                       '("Yes" "No") nil t nil nil "No")))
     (easky--display (easky-command "install-deps" (when (string= install-dev "Yes")
                                                     "--dev")))))
@@ -956,9 +967,9 @@ Argument DEST is the destination folder, default is set to `dist'."
 (defun easky-lint-checkdoc ()
   "Run checkdoc."
   (interactive)
-  (easky--exec-with-files "Select `checkdoc' action: "
+  (easky--exec-with-files "Select `lint checkdoc' action: "
     (easky--display (easky-command "lint" "checkdoc"))
-    (let ((file (read-file-name "Select file for `checkdoc': "
+    (let ((file (read-file-name "Select file for `lint checkdoc': "
                                 nil nil t nil #'easky--select-el-files)))
       (easky--display (easky-command "lint" "checkdoc" file)))
     (let ((wildcards (read-string "Wildcards: ")))
@@ -968,9 +979,9 @@ Argument DEST is the destination folder, default is set to `dist'."
 (defun easky-lint-check-declare ()
   "Run check-declare."
   (interactive)
-  (easky--exec-with-files "Select `check-declare' action: "
+  (easky--exec-with-files "Select `lint check-declare' action: "
     (easky--display (easky-command "lint" "check-declare"))
-    (let ((file (read-file-name "Select file for `check-declare': "
+    (let ((file (read-file-name "Select file for `lint check-declare': "
                                 nil nil t nil #'easky--select-el-files)))
       (easky--display (easky-command "lint" "check-declare" file)))
     (let ((wildcards (read-string "Wildcards: ")))
@@ -980,9 +991,9 @@ Argument DEST is the destination folder, default is set to `dist'."
 (defun easky-lint-elint ()
   "Run elint."
   (interactive)
-  (easky--exec-with-files "Select `elint' action: "
+  (easky--exec-with-files "Select `lint elint' action: "
     (easky--display (easky-command "lint" "elint"))
-    (let ((file (read-file-name "Select file for `elint': "
+    (let ((file (read-file-name "Select file for `lint elint': "
                                 nil nil t nil #'easky--select-el-files)))
       (easky--display (easky-command "lint" "elint" file)))
     (let ((wildcards (read-string "Wildcards: ")))
@@ -992,9 +1003,9 @@ Argument DEST is the destination folder, default is set to `dist'."
 (defun easky-lint-elsa ()
   "Run elsa."
   (interactive)
-  (easky--exec-with-files "Select `elsa' action: "
+  (easky--exec-with-files "Select `lint elsa' action: "
     (easky--display (easky-command "lint" "elsa"))
-    (let ((file (read-file-name "Select file for `elsa': "
+    (let ((file (read-file-name "Select file for `lint elsa': "
                                 nil nil t nil #'easky--select-el-files)))
       (easky--display (easky-command "lint" "elsa" file)))
     (let ((wildcards (read-string "Wildcards: ")))
@@ -1004,9 +1015,9 @@ Argument DEST is the destination folder, default is set to `dist'."
 (defun easky-lint-indent ()
   "Run indent-linet."
   (interactive)
-  (easky--exec-with-files "Select `indent' action: "
+  (easky--exec-with-files "Select `lint indent' action: "
     (easky--display (easky-command "lint" "indent"))
-    (let ((file (read-file-name "Select file for `indent': "
+    (let ((file (read-file-name "Select file for `lint indent': "
                                 nil nil t nil #'easky--select-el-files)))
       (easky--display (easky-command "lint" "indent" file)))
     (let ((wildcards (read-string "Wildcards: ")))
@@ -1022,9 +1033,9 @@ Argument DEST is the destination folder, default is set to `dist'."
 (defun easky-lint-package ()
   "Run package-lint."
   (interactive)
-  (easky--exec-with-files "Select `package' action: "
+  (easky--exec-with-files "Select `lint package' action: "
     (easky--display (easky-command "lint" "package"))
-    (let ((file (read-file-name "Select file for `package': "
+    (let ((file (read-file-name "Select file for `lint package': "
                                 nil nil t nil #'easky--select-el-files)))
       (easky--display (easky-command "lint" "package" file)))
     (let ((wildcards (read-string "Wildcards: ")))
@@ -1034,9 +1045,9 @@ Argument DEST is the destination folder, default is set to `dist'."
 (defun easky-lint-regexps ()
   "Run relint."
   (interactive)
-  (easky--exec-with-files "Select `regexps' action: "
+  (easky--exec-with-files "Select `lint regexps' action: "
     (easky--display (easky-command "lint" "regexps"))
-    (let ((file (read-file-name "Select file for `regexps': "
+    (let ((file (read-file-name "Select file for `lint regexps': "
                                 nil nil t nil #'easky--select-el-files)))
       (easky--display (easky-command "lint" "regexps" file)))
     (let ((wildcards (read-string "Wildcards: ")))
@@ -1049,12 +1060,24 @@ Argument DEST is the destination folder, default is set to `dist'."
 ;;; Testing
 
 ;;;###autoload
+(defun easky-test-activate ()
+  "Run activate test."
+  (interactive)
+  (easky--exec-with-files "Select `test activate' action: "
+    (easky--display (easky-command "test" "activate"))
+    (let ((file (read-file-name "Select file for `test activate': "
+                                nil nil t nil #'easky--select-el-files)))
+      (easky--display (easky-command "test" "activate" file)))
+    (let ((wildcards (read-string "Wildcards: ")))
+      (easky--display (easky-command "test" "activate" wildcards)))))
+
+;;;###autoload
 (defun easky-test-ert ()
   "Run ert test."
   (interactive)
-  (easky--exec-with-files "Select `ert' action: "
-    (easky--display (easky-command "test" "ert"))
-    (let ((file (read-file-name "Select file for `ert': "
+  (easky--exec-with-files "Select `test ert' action: "
+    (easky--display (easky-command "test" "test ert"))
+    (let ((file (read-file-name "Select file for `test ert': "
                                 nil nil t nil #'easky--select-el-files)))
       (easky--display (easky-command "test" "ert" file)))
     (let ((wildcards (read-string "Wildcards: ")))
@@ -1064,9 +1087,9 @@ Argument DEST is the destination folder, default is set to `dist'."
 (defun easky-test-ert-runner ()
   "Run ert test through `ert-runner'."
   (interactive)
-  (easky--exec-with-files "Select `ert-runner' action: "
+  (easky--exec-with-files "Select `test ert-runner' action: "
     (easky--display (easky-command "test" "ert-runner"))
-    (let ((file (read-file-name "Select file for `ert-runner': "
+    (let ((file (read-file-name "Select file for `test ert-runner': "
                                 nil nil t nil #'easky--select-el-files)))
       (easky--display (easky-command "test" "ert-runner" file)))
     (let ((wildcards (read-string "Wildcards: ")))
@@ -1076,9 +1099,9 @@ Argument DEST is the destination folder, default is set to `dist'."
 (defun easky-test-buttercup ()
   "Run buttercup test."
   (interactive)
-  (easky--exec-with-files "Select `buttercup' action: "
+  (easky--exec-with-files "Select `test buttercup' action: "
     (easky--display (easky-command "test" "buttercup"))
-    (let ((file (read-file-name "Select file for `regexps': "
+    (let ((file (read-file-name "Select file for `test buttercup': "
                                 nil nil t nil #'easky--select-el-files)))
       (easky--display (easky-command "test" "buttercup" file)))
     (let ((wildcards (read-string "Wildcards: ")))
