@@ -84,6 +84,11 @@
   :type 'float
   :group 'easky)
 
+(defcustom easky-extra-args '()
+  "Eask's extra arguments."
+  :type 'list
+  :group 'easky)
+
 (defconst easky-buffer-name "*easky*"
   "Buffer name for process file.")
 
@@ -558,6 +563,7 @@ Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
   "Form command string.
 
 Rest argument ARGS is the Eask's CLI arguments."
+  (setq args (append args easky-extra-args))
   (concat (or eask-api-executable "eask") " "
           (mapconcat #'shell-quote-argument (cl-remove-if #'null args) " ")))
 
