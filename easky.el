@@ -397,7 +397,7 @@ We use number to name our arguments, ARG0 and ARGS."
 (defun easky--post-command-once (&rest _)
   "One time post-command after Easky command."
   ;; XXX: This will allow us to scroll in the lv's window!
-  (unless (equal lv-wnd (ignore-errors (selected-window)))
+  (unless (equal lv-wnd (selected-window))
     ;; Once we select window other than lv's window, then we kill it!
     (remove-hook 'post-command-hook #'easky--post-command-once)
     (lv-delete-window)))
