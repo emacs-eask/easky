@@ -202,7 +202,7 @@ package module extends `package.el` so you can manage your package dependencies
 
 | Commads                          | Description                                                  |
 |----------------------------------|--------------------------------------------------------------|
-| `easky-package-refresh-contents` | Extends `package-refresh-contents`, see alsp `easky-refresh` |
+| `easky-package-refresh-contents` | Extends `package-refresh-contents`, see also `easky-refresh` |
 | `easky-list-packages`            | Extends `list-packages`                                      |
 | `easky-list-installed-packages`  | List installed packages                                      |
 | `easky-package-install`          | Extends `package-install`, see also `easky-install`          |
