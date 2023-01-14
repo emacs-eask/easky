@@ -654,7 +654,7 @@ This can be replaced with `easky-package-install' command."
   "Initialize Eask-file in DIR."
   (interactive
    (list (read-directory-name "Where you want to place your Eask-file: ")))
-  (let* ((files (eask--find-files dir))
+  (let* ((files (eask-api-files dir))
          (new-name (expand-file-name "Eask"))
          (base-name)
          (invalid-name))
