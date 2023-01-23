@@ -94,12 +94,13 @@ Some conditions may make Eask CLI unusable:
 
 All in one commands, these are commands we recommend you start with!
 
-| Commands      | Description                                          |
-|---------------|------------------------------------------------------|
-| `easky`       | Start Eask by selecting the through completion       |
-| `easky-clean` | Like `easky`, but show clean related commands instad |
-| `easky-lint`  | Like `easky`, but show lint related commands instad  |
-| `easky-test`  | Like `easky`, but show test related commands instad  |
+| Commands      | Description                                    |
+|---------------|------------------------------------------------|
+| `easky`       | Start Eask by selecting the through completion |
+| `easky-clean` | Master command for `clean` commands            |
+| `easky-link`  | Master command for `link` commands             |
+| `easky-lint`  | Master command for `lint` commands             |
+| `easky-test`  | Master command for `test` commands             |
 
 The following are the functions provided by `easky`, you can `M-x` with these
 commands:
@@ -139,6 +140,16 @@ Commands to keep your project clean:
 | `easky-clean-log-file`  | Remove all generated log files                       |
 | `easky-clean-all`       | Do all cleaning tasks                                |
 
+### 🔗 Linking
+
+Commands to link local packages:
+
+| Commands            | Description                  |
+|---------------------|------------------------------|
+| `easky-link-add`    | Link a local package         |
+| `easky-link-delete` | Delete local linked packages |
+| `easky-link-list`   | List all project links       |
+
 ### 📝 Linting
 
 Commands to help you lint your packages:
@@ -177,6 +188,7 @@ Sometimes you would want to execute some command directly!
 | `easky-exec`  | Run `eask exec`           |
 | `easky-emacs` | Run `eask emacs`          |
 | `easky-eval`  | Run `eask eval`           |
+| `easky-load`  | Run `eask load`           |
 
 ## 🔧 Customization
 

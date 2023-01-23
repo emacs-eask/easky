@@ -495,6 +495,17 @@ is the implementation."
         (user-error "Command %s not implemented yet, please consider report it to us!" command)))))
 
 ;;;###autoload
+(defun easky-link ()
+  "Start Eask link."
+  (interactive)
+  (easky--exec-with-help
+      "eask link --help" 2 "Select `eask link' command: "
+    (let ((command (intern (format "easky-link-%s" command))))
+      (if (fboundp command)
+          (call-interactively command)
+        (user-error "Command %s not implemented yet, please consider report it to us!" command)))))
+
+;;;###autoload
 (defun easky-lint ()
   "Start Eask lint."
   (interactive)
@@ -864,6 +875,18 @@ Argument ACTION is used to select checker's action."
    (list (read-string "eask eval ")))
   (easky--display (easky-command "eval" args)))
 
+;;;###autoload
+(defun easky-load ()
+  "Run eask load."
+  (interactive)
+  (easky--exec-with-files "Select `load' action: "
+    (easky--display (easky-command "load"))
+    (let ((file (read-file-name "Select file for `test ert': "
+                                nil nil t nil #'easky--select-el-files)))
+      (easky--display (easky-command "load" file)))
+    (let ((wildcards (read-string "Wildcards: ")))
+      (easky--display (easky-command "load" wildcards)))))
+
 ;;
 ;;; Install
 
@@ -1013,6 +1036,52 @@ Argument DEST is the destination folder, default is set to `dist'."
   "Do all cleaning tasks."
   (interactive)
   (easky--display (easky-command "clean" "all")))
+
+;;
+;;; Linking
+
+;;;###autoload
+(defun easky-eval (args)
+  "Run eask eval with ARGS."
+  (interactive
+   (list (read-string "eask eval ")))
+  (easky--display (easky-command "eval" args)))
+
+;;;###autoload
+(defun easky-link-add ()
+  "Link a local package."
+  (interactive)
+  (let ((name (read-string "Link name: "))
+        (path (read-directory-name "Source directory: ")))
+    (easky--display (easky-command "link" "add" name path))))
+
+;;;###autoload
+(defun easky-link-delete ()
+  "Delete local linked packages."
+  (interactive)
+  (easky--setup
+    (let*
+        ((links (eask--links))
+         (offset (easky--completing-frame-offset links))
+         (link (completing-read
+                "Select a link: "
+                (lambda (string predicate action)
+                  (if (eq action 'metadata)
+                      `(metadata
+                        (display-sort-function . ,#'identity)
+                        (annotation-function
+                         . ,(lambda (cand)
+                              (concat (propertize " " 'display `((space :align-to (- right ,offset))))
+                                      (cdr (assoc cand links))))))
+                    (complete-with-action action links string predicate)))
+                nil t)))
+      (easky--display (easky-command "link" "delete" link)))))
+
+;;;###autoload
+(defun easky-link-list ()
+  "List all project links."
+  (interactive)
+  (easky--display (easky-command "link" "list")))
 
 ;;
 ;;; Linting
