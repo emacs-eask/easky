@@ -6,7 +6,7 @@
 ;; Maintainer: Shen, Jen-Chieh <jcs090218@gmail.com>
 ;; URL: https://github.com/emacs-eask/easky
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "27.1") (eask-mode "0.1.0") (eask-api "0.1.0") (ansi "0.4.1") (lv "0.0") (marquee-header "0.1.0"))
+;; Package-Requires: ((emacs "27.1") (eask-mode "0.1.0") (eask "0.1.0") (ansi "0.4.1") (lv "0.0") (marquee-header "0.1.0"))
 ;; Keywords: maint easky
 
 ;; This file is not part of GNU Emacs.
@@ -38,7 +38,7 @@
 
 (require 'eask-mode)
 (require 'eask-api)
-(require 'eask-api-core)
+(require 'eask-core)
 (require 'ansi)  ; we need `ansi' to run through Eask API
 (require 'lv)
 (require 'marquee-header)

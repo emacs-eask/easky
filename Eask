@@ -16,7 +16,7 @@
 
 (depends-on "emacs" "27.1")
 (depends-on "eask-mode")
-(depends-on "eask-api")
+(depends-on "eask")
 (depends-on "ansi")
 (depends-on "lv")
 (depends-on "marquee-header")
