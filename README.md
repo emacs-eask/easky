@@ -230,7 +230,7 @@ package module extends `package.el` so you can manage your package dependencies
 
 - [company-eask](https://github.com/emacs-eask/company-eask) - Company backend for Eask-file
 - [eldoc-eask](https://github.com/emacs-eask/eldoc-eask) - Eldoc support for Eask-file
-- [flycheck-eask](https://github.com/emacs-eask/flycheck-eask) - Eask support in Flycheck
+- [flycheck-eask](https://github.com/flycheck/flycheck-eask) - Eask support in Flycheck
 - [flymake-eask](https://github.com/flymake/flymake-eask) - Eask support in Flymake
 
 ## Contribute
