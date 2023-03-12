@@ -437,7 +437,7 @@ The format is in (command . description)."
     (reverse data)))
 
 (defmacro easky--exec-with-help (help-cmd subcmd-index prompt &rest body)
-  "Execut command with help manual parsed.
+  "Execute command with help manual parsed.
 
 For arguments HELP-CMD and SUBCMD-INDEX, see function `easky-parse-help-manual'
 for more information.
@@ -479,6 +479,17 @@ is the implementation."
   (easky--exec-with-help
       "eask create --help" 2 "Select `eask create' command: "
     (let ((command (intern (format "easky-create-%s" command))))
+      (if (fboundp command)
+          (call-interactively command)
+        (user-error "Command %s not implemented yet, please consider report it to us!" command)))))
+
+;;;###autoload
+(defun easky-generate ()
+  "Start Eask generate."
+  (interactive)
+  (easky--exec-with-help
+      "eask generate --help" 2 "Select `eask generate' command: "
+    (let ((command (intern (format "easky-generate-%s" command))))
       (if (fboundp command)
           (call-interactively command)
         (user-error "Command %s not implemented yet, please consider report it to us!" command)))))
@@ -538,7 +549,7 @@ is the implementation."
   "Options for command `check-eask'.")
 
 (defmacro easky--exec-with-files (prompt form-1 form-2 form-3)
-  "Execut command with file selected.
+  "Execute command with file selected.
 
 Argument PROMPT is a string to ask the user regarding the file action.
 
@@ -772,18 +783,6 @@ This can be replaced with `easky-package-install' command."
   (easky--display (easky-command "refresh")))
 
 ;;;###autoload
-(defun easky-autoloads ()
-  "Generate autloads file."
-  (interactive)
-  (easky--display (easky-command "autoloads")))
-
-;;;###autoload
-(defun easky-pkg-file ()
-  "Generate pkg-file and printed it out!"
-  (interactive)
-  (easky--display (easky-command "pkg-file")))
-
-;;;###autoload
 (defun easky-recipe ()
   "Recommend me a recipe format."
   (interactive)
@@ -893,10 +892,10 @@ Argument ACTION is used to select checker's action."
 (defconst easky-exec-packages-options
   '(("Current Package (Default)" . "Operate with current package defined in Eask-file")
     ("Specified"                 . "Specify packages through read-string"))
-  "Options for command `check-eask'.")
+  "Options for command `packages'.")
 
 (defmacro easky--exec-with-packages (prompt form-1 form-2)
-  "Execut command with packages selected.
+  "Execute command with packages selected.
 
 Argument PROMPT is a string to ask the user regarding the file action.
 
@@ -985,6 +984,76 @@ Arguments FORM-1 and FORM-2 are execution by each file action."
   (user-error
    (concat "This command is currently not supported; please use the command line "
            "with the command `eask create elpa`!")))
+
+;;
+;;; Generate
+;;;
+
+;;;###autoload
+(defun easky-generate-autoloads ()
+  "Generate autloads file."
+  (interactive)
+  (easky--display (easky-command "generate" "autoloads")))
+
+;;;###autoload
+(defun easky-generate-pkg-file ()
+  "Generate pkg-file and printed it out."
+  (interactive)
+  (easky--display (easky-command "generate" "pkg-file")))
+
+;;;###autoload
+(defun easky-generate-license ()
+  "Generate license file."
+  (interactive)
+  (let ((license-type (read-string "License type: ")))
+    (easky--display (easky-command "generate" "license" license-type))))
+
+;;;###autoload
+(defun easky-generate-workflow ()
+  "Generate workflow file."
+  (interactive)
+  (easky--exec-with-help
+      "eask generate workflow --help" 3 "Select `eask generate workflow' command: "
+    (let ((command (intern (format "easky-generate-workflow-%s" command))))
+      (if (fboundp command)
+          (call-interactively command)
+        (user-error "Command %s not implemented yet, please consider report it to us!" command)))))
+
+;;;###autoload
+(defun easky-generate-workflow-circle-ci ()
+  "Generate CircleCI test file."
+  (interactive)
+  (let* ((dir (expand-file-name ".circleci/"))
+         (prompt (format "Filename to create `%s`: " dir))
+         (filename (read-string prompt "config.yml")))
+    (easky--display (easky-command "generate" "workflow" "circle-ci" filename))))
+
+;;;###autoload
+(defun easky-generate-workflow-github ()
+  "Generate GitHub Actions test file."
+  (interactive)
+  (let* ((dir (expand-file-name ".github/workflows/"))
+         (prompt (format "Filename to create `%s`: " dir))
+         (filename (read-string prompt "test.yml")))
+    (easky--display (easky-command "generate" "workflow" "github" filename))))
+
+;;;###autoload
+(defun easky-generate-workflow-gitlab ()
+  "Generate GitLab Runner test file."
+  (interactive)
+  (let* ((dir default-directory)
+         (prompt (format "Filename to create `%s`: " dir))
+         (filename (read-string prompt ".gitlab-ci.yml")))
+    (easky--display (easky-command "generate" "workflow" "gitlab" filename))))
+
+;;;###autoload
+(defun easky-generate-workflow-travis-ci ()
+  "Generate Travis CI test file."
+  (interactive)
+  (let* ((dir default-directory)
+         (prompt (format "Filename to create `%s`: " dir))
+         (filename (read-string prompt ".travis.yml")))
+    (easky--display (easky-command "generate" "workflow" "gitlab" filename))))
 
 ;;
 ;;; Cleaning
@@ -1144,6 +1213,12 @@ Argument DEST is the destination folder, default is set to `dist'."
   "Run keywords linter."
   (interactive)
   (easky--display (easky-command "lint" "keywords")))
+
+;;;###autoload
+(defun easky-lint-license ()
+  "Run license linter."
+  (interactive)
+  (easky--display (easky-command "lint" "license")))
 
 ;;;###autoload
 (defun easky-lint-package ()
