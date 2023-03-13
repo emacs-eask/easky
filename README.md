@@ -94,13 +94,15 @@ Some conditions may make Eask CLI unusable:
 
 All in one commands, these are commands we recommend you start with!
 
-| Commands      | Description                                    |
-|---------------|------------------------------------------------|
-| `easky`       | Start Eask by selecting the through completion |
-| `easky-clean` | Master command for `clean` commands            |
-| `easky-link`  | Master command for `link` commands             |
-| `easky-lint`  | Master command for `lint` commands             |
-| `easky-test`  | Master command for `test` commands             |
+| Commands         | Description                                    |
+|------------------|------------------------------------------------|
+| `easky`          | Start Eask by selecting the through completion |
+| `easky-create`   | Master command for `create` commands           |
+| `easky-generate` | Master command for `generate` commands         |
+| `easky-clean`    | Master command for `clean` commands            |
+| `easky-link`     | Master command for `link` commands             |
+| `easky-lint`     | Master command for `lint` commands             |
+| `easky-test`     | Master command for `test` commands             |
 
 The following are the functions provided by `easky`, you can `M-x` with these
 commands:
@@ -119,12 +121,31 @@ commands:
 | `easky-reinstall`    | Reinstall packages, see also `easky-package-reinstall` |
 | `easky-upgrade`      | Upgrade packages., see also `easky-package-update`     |
 | `easky-install-deps` | Install all package dependencies                       |
-| `easky-pkg-file`     | Generate pkg-file and printed it out!                  |
 | `easky-recipe`       | Recommend me a recipe format.                          |
 | `easky-help`         | Print Eask help manual                                 |
 | `easky-version`      | Print Eask version                                     |
 | `easky-upgrade-eask` | Upgrade Eask CLI                                       |
 | `easky-stop`         | Terminate the current process                          |
+
+### 🔈 Create
+
+| Commands               | Description                         |
+|------------------------|-------------------------------------|
+| `easky-create-package` | Create a new elisp package          |
+| `easky-create-elpa`    | Create a new ELPA using github-elpa |
+
+### 📚 Generate
+
+| Commands                            | Description                                     |
+|-------------------------------------|-------------------------------------------------|
+| `easky-generate-autoloads`          | Generate `-autoloads.el` file, and print it out |
+| `easky-generate-pkg-file`           | Generate `-pkg.el`, and printed it out          |
+| `easky-generate-license`            | Generate LICENSE file                           |
+| `easky-generate-workflow`           | Master command for `generate workflow`          |
+| `easky-generate-workflow-circle-ci` | Generate CircleCI test file                     |
+| `easky-generate-workflow-github`    | Generate GitHub Actions test file               |
+| `easky-generate-workflow-gitlab`    | Generate GitLab Runner test file                |
+| `easky-generate-workflow-travis-ci` | Generate Travis CI test file                    |
 
 ### 🧹 Cleaning
 
@@ -162,6 +183,7 @@ Commands to help you lint your packages:
 | `easky-lint-elsa`          | Run elsa            |
 | `easky-lint-indent`        | Run indent-linet    |
 | `easky-lint-keywords`      | Run keywords linter |
+| `easky-lint-license`       | Run license linter  |
 | `easky-lint-regexps`       | Run relint          |
 
 > 💡 These extenral tools are automatically installed in your sandbox!

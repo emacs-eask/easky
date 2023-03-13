@@ -92,7 +92,8 @@
 (defconst easky-buffer-name "*easky*"
   "Buffer name for process file.")
 
-(defvar easky--timeout-timer nil)
+(defvar easky--timeout-timer nil
+  "Timeout if execute for too long.")
 
 ;;
 ;; (@* "Externals" )
@@ -271,7 +272,8 @@ We use number to name our arguments, ARG0 and ARGS."
   (with-temp-buffer
     (insert str)
     (goto-char (point-min))
-    (when (search-forward "Loading Eask file" nil t)
+    (when (or (search-forward "Loading Eask file" nil t)
+              (search-forward "Checking system" nil t))
       (forward-line 1))
     (let ((content (string-trim (buffer-substring (point) (point-max)))))
       (if (string-empty-p content)
@@ -288,10 +290,17 @@ We use number to name our arguments, ARG0 and ARGS."
           content)
       (insert output)
       (easky--ansi-color-apply-on-region start (point) t)  ; apply in buffer
+      ;; Strip header!
       (setq content (if easky-strip-header
                         (easky--strip-headers (buffer-string))
                       (buffer-string)))
-      (funcall easky-display-function content)
+      ;; Display it!
+      (cl-case easky-display-function
+        (`lv-message
+         (funcall easky-display-function "%s" content))
+        (t
+         (funcall easky-display-function content)))
+      ;; Post actions
       (when (easky-lv-message-p)
         ;; Apply color in lv buffer!
         (with-current-buffer (window-buffer lv-wnd)
@@ -655,6 +664,13 @@ This can be replaced with `easky-package-install' command."
   "List available keywords that can be used in the header section."
   (interactive)
   (easky--display (easky-command "keywords")))
+
+;;;###autoload
+(defun easky-cat ()
+  "View filename(s)."
+  (interactive)
+  (let ((wildcards (read-string "Wildcards: ")))
+    (easky--display (easky-command "cat" wildcards))))
 
 ;;;###autoload
 (defun easky-path ()
