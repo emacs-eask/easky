@@ -1021,8 +1021,21 @@ Arguments FORM-1 and FORM-2 are execution by each file action."
 (defun easky-generate-license ()
   "Generate license file."
   (interactive)
-  (let ((license-type (read-string "License type: ")))
-    (easky--display (easky-command "generate" "license" license-type))))
+  (let ((license-type (read-string "License type: "))
+        (filename (read-file-name "New LICENSE filename: ")))
+    (easky--display (easky-command "generate" "license" license-type
+                                   (when filename "-o")
+                                   (when filename filename)))))
+
+;;;###autoload
+(defun easky-generate-ignore ()
+  "Generate ignore file."
+  (interactive)
+  (let ((ignore-type (read-string "Ignore type: "))
+        (filename (read-file-name "New ignore filename: ")))
+    (easky--display (easky-command "generate" "ignore" ignore-type
+                                   (when filename "-o")
+                                   (when filename filename)))))
 
 ;;;###autoload
 (defun easky-generate-workflow ()
