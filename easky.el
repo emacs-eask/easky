@@ -617,6 +617,12 @@ Rest argument ARGS is the Eask's CLI arguments."
   (easky--display (easky-command "info")))
 
 ;;;###autoload
+(defun easky-status ()
+  "Display the state of the workspace."
+  (interactive)
+  (easky--display (easky-command "status")))
+
+;;;###autoload
 (defun easky-locate ()
   "Print Eask installed location."
   (interactive)
