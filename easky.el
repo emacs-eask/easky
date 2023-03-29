@@ -302,9 +302,6 @@ We use number to name our arguments, ARG0 and ARGS."
          (funcall easky-display-function content)))
       ;; Post actions
       (when (easky-lv-message-p)
-        ;; Apply color in lv buffer!
-        (with-current-buffer (window-buffer lv-wnd)
-          (ansi-color-apply-on-region (point-min) (point-max)))
         ;; Variable `lv-first' will prevent display different on every flush!
         (when (and easky-show-tip lv-first)
           (with-selected-window lv-wnd
@@ -321,7 +318,10 @@ We use number to name our arguments, ARG0 and ARGS."
         (when easky-move-point-for-output
           (with-selected-window lv-wnd
             ;; XXX: Don't go above max lin, it will shift!
-            (goto-char (1- (point-max)))))))))
+            (goto-char (1- (point-max)))))
+        ;; Apply color in lv buffer!
+        (with-current-buffer (window-buffer lv-wnd)
+          (ansi-color-apply-on-region (point-min) (point-max)))))))
 
 (defun easky--default-sentinel (process &optional _event)
   "Default sentinel for PROCESS."
