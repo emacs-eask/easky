@@ -763,35 +763,6 @@ This can be replaced with `easky-package-install' command."
         (lv-delete-window)))))
 
 ;;;###autoload
-(defun easky-run ()
-  "Execute Eask's script."
-  (interactive)
-  (easky--setup
-    (if eask-scripts
-        (let* ((offset (easky--completing-frame-offset eask-scripts))
-               (selected-script
-                (completing-read
-                 "Run Eask's script: "
-                 (lambda (string predicate action)
-                   (if (eq action 'metadata)
-                       `(metadata
-                         (display-sort-function . ,#'identity)
-                         (annotation-function
-                          . ,(lambda (cand)
-                               (concat (propertize " " 'display `((space :align-to (- right ,offset))))
-                                       (cdr (assoc cand eask-scripts))))))
-                     (complete-with-action action eask-scripts string predicate)))
-                 nil t)))
-          (easky--display (easky-command "run" selected-script)))
-      (message (concat
-                "Not finding any script to run, you can add one by adding the line below to your Eask-file:\n\n"
-                "  (script \"test\" \"echo Hi!~\")"
-                "\n\nThen re-run this command once again!")))))
-
-;;;###autoload
-(defalias 'easky-run-script 'easky-run)
-
-;;;###autoload
 (defun easky-package (dir)
   "Package your package to DIR."
   (interactive
@@ -907,6 +878,68 @@ Argument ACTION is used to select checker's action."
       (easky--display (easky-command "load" file)))
     (let ((wildcards (read-string "Wildcards: ")))
       (easky--display (easky-command "load" wildcards)))))
+
+;;;###autoload
+(defun easky-run ()
+  "Run Eask's custom command/script."
+  (interactive)
+  (easky--exec-with-help
+      "eask run --help" 2 "Select `eask run' command: "
+    (let ((command (intern (format "easky-run-%s" command))))
+      (if (fboundp command)
+          (call-interactively command)
+        (user-error "Command %s not implemented yet, please consider report it to us!" command)))))
+
+;;;###autoload
+(defun easky-run-command ()
+  "Execute Eask's command."
+  (interactive)
+  (easky--setup
+    (if eask-commands
+        (let* ((selected-command
+                (completing-read
+                 "Run Eask's command: "
+                 (lambda (string predicate action)
+                   (if (eq action 'metadata)
+                       `(metadata
+                         (display-sort-function . ,#'identity)
+                         (annotation-function
+                          . ,(lambda (cand)
+                               (concat (propertize " " 'display `((space :align-to (- right))))
+                                       (cdr (assoc cand eask-commands))))))
+                     (complete-with-action action eask-commands string predicate)))
+                 nil t)))
+          (easky--display (easky-command "run" "command" selected-command)))
+      (message (concat
+                "Not finding any command to run, you can add one by adding the line below to your Eask-file:\n\n"
+                "  (eask-defcommand my-command ...)"
+                "\n\nThen re-run this command once again!")))))
+
+;;;###autoload
+(defun easky-run-script ()
+  "Execute Eask's script."
+  (interactive)
+  (easky--setup
+    (if eask-scripts
+        (let* ((offset (easky--completing-frame-offset eask-scripts))
+               (selected-script
+                (completing-read
+                 "Run Eask's script: "
+                 (lambda (string predicate action)
+                   (if (eq action 'metadata)
+                       `(metadata
+                         (display-sort-function . ,#'identity)
+                         (annotation-function
+                          . ,(lambda (cand)
+                               (concat (propertize " " 'display `((space :align-to (- right ,offset))))
+                                       (cdr (assoc cand eask-scripts))))))
+                     (complete-with-action action eask-scripts string predicate)))
+                 nil t)))
+          (easky--display (easky-command "run" "script" selected-script)))
+      (message (concat
+                "Not finding any script to run, you can add one by adding the line below to your Eask-file:\n\n"
+                "  (script \"test\" \"echo Hi!~\")"
+                "\n\nThen re-run this command once again!")))))
 
 ;;
 ;;; Install
@@ -1332,6 +1365,16 @@ Argument DEST is the destination folder, default is set to `dist'."
       (easky--display (easky-command "test" "buttercup" file)))
     (let ((wildcards (read-string "Wildcards: ")))
       (easky--display (easky-command "test" "buttercup" wildcards)))))
+
+;;;###autoload
+(defun easky-test-melpazoid ()
+  "Run melpazoid test."
+  (interactive)
+  (easky--exec-with-files "Select `test melpazoid' action: "
+    (easky--display (easky-command "test" "melpazoid"))
+    (let ((dir (read-directory-name "Select directory for `test melpazoid': ")))
+      (easky--display (easky-command "test" "melpazoid" dir)))
+    nil))
 
 (provide 'easky)
 ;;; easky.el ends here
