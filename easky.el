@@ -1,4 +1,4 @@
-;;; easky.el --- Control Eask in Emacs  -*- lexical-binding: t; -*-
+;;; easky.el --- Control Eask CLI in Emacs  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2022-2023  Shen, Jen-Chieh
 

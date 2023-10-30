@@ -3,7 +3,7 @@
 <a href="#"><img align="right" src="https://raw.githubusercontent.com/emacs-eask/cli/master/docs/static/logo.png" width="20%"></a>
 
 # easky
-> Control Eask in Emacs
+> Control Eask CLI in Emacs
 
 [![CI](https://github.com/emacs-eask/easky/actions/workflows/test.yml/badge.svg)](https://github.com/emacs-eask/easky/actions/workflows/test.yml)
 
