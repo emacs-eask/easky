@@ -1133,7 +1133,7 @@ Arguments FORM-1 and FORM-2 are execution by each file action."
   (easky--display (easky-command "clean" "workspace")))
 
 ;;;###autoload
-(defalias 'easky-clean-eask #'easky-clean-workspace)
+(defalias 'easky-clean-.eask #'easky-clean-workspace)
 
 ;;;###autoload
 (defun easky-clean-elc ()
