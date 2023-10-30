@@ -41,7 +41,7 @@
 ;;
 
 (defun easky-package--call-safely (ver func)
-  "Call FUNC interactively safely after checking the emacs VER."
+  "Call FUNC interactively safely after checking the Emacs VER."
   (if (version< emacs-version ver)
       (user-error
        (concat (format "`%s' is not supported in your version of Emacs; " func)
@@ -149,19 +149,19 @@ The form UNWIND is use to revert package information."
     (easky-package--revert-info)))
 
 ;;;###autoload
-(defun easky-package-update ()
+(defun easky-package-upgrade ()
   "Update a package from Eask sandbox."
   (interactive)
   (easky-package--setup
-      (easky-package--call-safely "29.0.50" #'package-update)
+      (easky-package--call-safely "29.0.50" #'package-upgrade)
     (easky-package--revert-info)))
 
 ;;;###autoload
-(defun easky-package-update-all ()
+(defun easky-package-upgrade-all ()
   "Update all packages from Eask sandbox."
   (interactive)
   (easky-package--setup
-      (easky-package--call-safely "29.0.50" #'package-update-all)
+      (easky-package--call-safely "29.0.50" #'package-upgrade-all)
     (easky-package--revert-info)))
 
 (provide 'easky-package)
