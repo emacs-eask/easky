@@ -685,7 +685,7 @@ This can be replaced with `easky-package-install' command."
   (easky--display (easky-command "path")))
 
 ;;;###autoload
-(defalias 'easky-exec-path 'easky-path)
+(defalias 'easky-exec-path #'easky-path)
 
 ;;;###autoload
 (defun easky-load-path ()
@@ -1133,7 +1133,7 @@ Arguments FORM-1 and FORM-2 are execution by each file action."
   (easky--display (easky-command "clean" "workspace")))
 
 ;;;###autoload
-(defalias 'easky-clean-.eask 'easky-clean-workspace)
+(defalias 'easky-clean-eask #'easky-clean-workspace)
 
 ;;;###autoload
 (defun easky-clean-elc ()
@@ -1313,7 +1313,7 @@ Argument DEST is the destination folder, default is set to `dist'."
       (easky--display (easky-command "lint" "regexps" wildcards)))))
 
 ;;;###autoload
-(defalias 'easky-lint-relint 'easky-lint-regexps)
+(defalias 'easky-lint-relint #'easky-lint-regexps)
 
 ;;
 ;;; Testing
