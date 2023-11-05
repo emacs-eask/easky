@@ -1,6 +1,6 @@
 (package "easky"
          "0.1.0"
-         "Control Eask CLI in Emacs")
+         "Control the Eask command-line interface")
 
 (website-url "https://github.com/emacs-eask/easky")
 (keywords "maint" "easky")

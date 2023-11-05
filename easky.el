@@ -1,4 +1,4 @@
-;;; easky.el --- Control Eask CLI in Emacs  -*- lexical-binding: t; -*-
+;;; easky.el --- Control the Eask command-line interface  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2022-2023  Shen, Jen-Chieh
 
@@ -26,7 +26,7 @@
 
 ;;; Commentary:
 ;;
-;; Control Eask in Emacs.
+;; Control the Eask command-line interface.
 ;;
 
 ;;; Code:
