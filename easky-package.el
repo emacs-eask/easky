@@ -73,17 +73,17 @@ The form UNWIND is use to revert package information."
   "Like command `package-refresh-contents' but in Eask sandbox."
   (interactive)
   (easky-package--setup
-   (call-interactively #'package-refresh-contents)
-   (easky-package--revert-info)))
+      (call-interactively #'package-refresh-contents)
+    (easky-package--revert-info)))
 
 ;;;###autoload
 (defun easky-list-packages ()
   "List packages."
   (interactive)
   (easky-package--setup
-   (package-list-packages t)
-   ;; XXX: We revert information after it's done displaying!
-   (add-hook 'package-menu-mode-hook #'easky-package--revert-info)))
+      (package-list-packages t)
+    ;; XXX: We revert information after it's done displaying!
+    (add-hook 'package-menu-mode-hook #'easky-package--revert-info)))
 
 ;;;###autoload
 (defalias 'easky-package-list-packages 'easky-list-packages)
@@ -93,81 +93,81 @@ The form UNWIND is use to revert package information."
   "List packages."
   (interactive)
   (easky-package--setup
-   (progn
-     (package-activate-all)  ; refresh once!
-     (if package-activated-list
-         (package-show-package-list package-activated-list)
-       (user-error
-        (concat
-         "No installed packges, try the following options:\n\n"
-         "  [1] 'M-x easky-package-install'\n"
-         "  [2] Add dependencies to your Eask-file, and 'M-x easky-install-deps'"))))
-   ;; XXX: We revert information after it's done displaying!
-   (add-hook 'package-menu-mode-hook #'easky-package--revert-info)))
+      (progn
+        (package-activate-all)  ; refresh once!
+        (if package-activated-list
+            (package-show-package-list package-activated-list)
+          (user-error
+           (concat
+            "No installed packges, try the following options:\n\n"
+            "  [1] 'M-x easky-package-install'\n"
+            "  [2] Add dependencies to your Eask-file, and 'M-x easky-install-deps'"))))
+    ;; XXX: We revert information after it's done displaying!
+    (add-hook 'package-menu-mode-hook #'easky-package--revert-info)))
 
 ;;;###autoload
 (defun easky-package-install ()
   "Install a package to Eask sandbox."
   (interactive)
   (easky-package--setup
-   (call-interactively #'package-install)
-   (easky-package--revert-info)))
+      (call-interactively #'package-install)
+    (easky-package--revert-info)))
 
 ;;;###autoload
 (defun easky-package-delete ()
   "Delete a package from Eask sandbox."
   (interactive)
   (easky-package--setup
-   (call-interactively #'package-delete)
-   (easky-package--revert-info)))
+      (call-interactively #'package-delete)
+    (easky-package--revert-info)))
 
 ;;;###autoload
 (defun easky-package-reinstall ()
   "Reinstall a package in Eask sandbox."
   (interactive)
   (easky-package--setup
-   (call-interactively #'package-reinstall)
-   (easky-package--revert-info)))
+      (call-interactively #'package-reinstall)
+    (easky-package--revert-info)))
 
 ;;;###autoload
 (defun easky-package-recompile ()
   "Recompile a package in Eask sandbox."
   (interactive)
   (easky-package--setup
-   (easky-package--call-safely "29.0.50" #'package-recompile)
-   (easky-package--revert-info)))
+      (easky-package--call-safely "29.0.50" #'package-recompile)
+    (easky-package--revert-info)))
 
 ;;;###autoload
 (defun easky-package-recompile-all ()
   "Recompile all packages in Eask sandbox."
   (interactive)
   (easky-package--setup
-   (easky-package--call-safely "29.0.50" #'package-recompile-all)
-   (easky-package--revert-info)))
+      (easky-package--call-safely "29.0.50" #'package-recompile-all)
+    (easky-package--revert-info)))
 
 ;;;###autoload
 (defun easky-describe-package ()
   "Describe a package from Eask source."
   (interactive)
   (easky-package--setup
-   (call-interactively #'describe-package)
-   (easky-package--revert-info)))
+      (call-interactively #'describe-package)
+    (easky-package--revert-info)))
 
 ;;;###autoload
 (defun easky-package-upgrade ()
   "Update a package from Eask sandbox."
   (interactive)
   (easky-package--setup
-   (easky-package--call-safely "29.0.50" #'package-upgrade)
-   (easky-package--revert-info)))
+      (easky-package--call-safely "29.0.50" #'package-upgrade)
+    (easky-package--revert-info)))
 
 ;;;###autoload
 (defun easky-package-upgrade-all ()
   "Update all packages from Eask sandbox."
   (interactive)
   (easky-package--setup
-   (easky-package--call-safely "29.0.50" #'package-upgrade-all)
-   (easky-package--revert-info)))
+      (easky-package--call-safely "29.0.50" #'package-upgrade-all)
+    (easky-package--revert-info)))
 
 (provide 'easky-package)
 ;;; easky-package.el ends here
