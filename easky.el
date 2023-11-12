@@ -112,6 +112,14 @@
   (declare (indent 0) (debug t))
   `(let (message-log-max) ,@body))
 
+(defun easky-command (&rest args)
+  "Form command string.
+
+Rest argument ARGS is the Eask's CLI arguments."
+  (setq args (append args easky-extra-args))
+  (concat (or eask-api-executable "eask") " "
+          (mapconcat #'shell-quote-argument (cl-remove-if #'null args) " ")))
+
 (defun easky--completing-frame-offset (options)
   "Return frame offset while `completing-read'.
 
@@ -475,7 +483,7 @@ is the implementation."
   "Start Eask."
   (interactive)
   (easky--exec-with-help
-      "eask --help" 1 "Select `eask' command: "
+      (easky-command "--help") 1 "Select `eask' command: "
     (let ((command (intern (format "easky-%s" command))))
       (if (fboundp command)
           (call-interactively command)
@@ -486,7 +494,7 @@ is the implementation."
   "Start Eask create."
   (interactive)
   (easky--exec-with-help
-      "eask create --help" 2 "Select `eask create' command: "
+      (easky-command "create" "--help") 2 "Select `eask create' command: "
     (let ((command (intern (format "easky-create-%s" command))))
       (if (fboundp command)
           (call-interactively command)
@@ -497,7 +505,7 @@ is the implementation."
   "Start Eask generate."
   (interactive)
   (easky--exec-with-help
-      "eask generate --help" 2 "Select `eask generate' command: "
+      (easky-command "generate" "--help") 2 "Select `eask generate' command: "
     (let ((command (intern (format "easky-generate-%s" command))))
       (if (fboundp command)
           (call-interactively command)
@@ -508,7 +516,7 @@ is the implementation."
   "Start Eask clean."
   (interactive)
   (easky--exec-with-help
-      "eask clean --help" 2 "Select `eask clean' command: "
+      (easky-command "clean" "--help") 2 "Select `eask clean' command: "
     (let ((command (intern (format "easky-clean-%s" command))))
       (if (fboundp command)
           (call-interactively command)
@@ -519,7 +527,7 @@ is the implementation."
   "Start Eask link."
   (interactive)
   (easky--exec-with-help
-      "eask link --help" 2 "Select `eask link' command: "
+      (easky-command "link" "--help")  2 "Select `eask link' command: "
     (let ((command (intern (format "easky-link-%s" command))))
       (if (fboundp command)
           (call-interactively command)
@@ -530,7 +538,7 @@ is the implementation."
   "Start Eask lint."
   (interactive)
   (easky--exec-with-help
-      "eask lint --help" 2 "Select `eask lint' command: "
+      (easky-command "lint" "--help")  2 "Select `eask lint' command: "
     (let ((command (intern (format "easky-lint-%s" command))))
       (if (fboundp command)
           (call-interactively command)
@@ -541,7 +549,7 @@ is the implementation."
   "Start Eask test."
   (interactive)
   (easky--exec-with-help
-      "eask test --help" 2 "Select `eask test' command: "
+      (easky-command "test" "--help")  2 "Select `eask test' command: "
     (let ((command (intern (format "easky-test-%s" command))))
       (if (fboundp command)
           (call-interactively command)
@@ -589,14 +597,6 @@ Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
   (or (and (string-suffix-p ".el" candidate)
            (not (string= dir-locals-file candidate)))
       (file-directory-p candidate)))
-
-(defun easky-command (&rest args)
-  "Form command string.
-
-Rest argument ARGS is the Eask's CLI arguments."
-  (setq args (append args easky-extra-args))
-  (concat (or eask-api-executable "eask") " "
-          (mapconcat #'shell-quote-argument (cl-remove-if #'null args) " ")))
 
 ;;;###autoload
 (defun easky-help ()
@@ -1081,7 +1081,7 @@ Arguments FORM-1 and FORM-2 are execution by each file action."
   "Generate workflow file."
   (interactive)
   (easky--exec-with-help
-      "eask generate workflow --help" 3 "Select `eask generate workflow' command: "
+      (easky-command "generate" "workflow" "--help") 3 "Select `eask generate workflow' command: "
     (let ((command (intern (format "easky-generate-workflow-%s" command))))
       (if (fboundp command)
           (call-interactively command)
