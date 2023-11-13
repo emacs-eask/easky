@@ -92,7 +92,7 @@ Some conditions may make Eask CLI unusable:
 
 ## 📇 Support Commands
 
-All in one commands, these are commands we recommend you start with!
+All in-one commands, these are commands we recommend you start with!
 
 | Commands         | Description                                    |
 |------------------|------------------------------------------------|
@@ -103,6 +103,7 @@ All in one commands, these are commands we recommend you start with!
 | `easky-link`     | Master command for `link` commands             |
 | `easky-lint`     | Master command for `lint` commands             |
 | `easky-test`     | Master command for `test` commands             |
+| `easky-source`   | Master command for `source` commands           |
 
 The following are the functions provided by `easky`, you can `M-x` with these
 commands:
@@ -147,6 +148,19 @@ commands:
 | `easky-generate-workflow-gitlab`    | Generate GitLab Runner test file                |
 | `easky-generate-workflow-travis-ci` | Generate Travis CI test file                    |
 
+### 💻 Execution
+
+Sometimes you would want to execute some command directly!
+
+| Commands       | Description               |
+|----------------|---------------------------|
+| `easky-eask`   | Run the Eask CLI directly |
+| `easky-exec`   | Run `eask exec`           |
+| `easky-emacs`  | Run `eask emacs`          |
+| `easky-eval`   | Run `eask eval`           |
+| `easky-load`   | Run `eask load`           |
+| `easky-docker` | Run `eask docker`         |
+
 ### 🧹 Cleaning
 
 Commands to keep your project clean:
@@ -160,16 +174,6 @@ Commands to keep your project clean:
 | `easky-clean-pkg-file`  | Remove generated pkg-file                            |
 | `easky-clean-log-file`  | Remove all generated log files                       |
 | `easky-clean-all`       | Do all cleaning tasks                                |
-
-### 🔗 Linking
-
-Commands to link local packages:
-
-| Commands            | Description                  |
-|---------------------|------------------------------|
-| `easky-link-add`    | Link a local package         |
-| `easky-link-delete` | Delete local linked packages |
-| `easky-link-list`   | List all project links       |
 
 ### 📝 Linting
 
@@ -188,6 +192,26 @@ Commands to help you lint your packages:
 
 > 💡 These extenral tools are automatically installed in your sandbox!
 
+### 🔗 Linking
+
+Commands to link local packages:
+
+| Commands            | Description                  |
+|---------------------|------------------------------|
+| `easky-link-add`    | Link a local package         |
+| `easky-link-delete` | Delete local linked packages |
+| `easky-link-list`   | List all project links       |
+
+### 🔗 Control DSL
+
+Commands to control DSL:
+
+| Commands              | Description              |
+|-----------------------|--------------------------|
+| `easky-source-add`    | Add an archive source    |
+| `easky-source-delete` | Delete an archive source |
+| `easky-source-list`   | List all sources         |
+
 ### 🔍 Testing
 
 Commands to help you test your packages:
@@ -197,20 +221,9 @@ Commands to help you test your packages:
 | `easky-test-ert`        | Run ert tests                     |
 | `easky-test-ert-runner` | Run ert test through `ert-runner` |
 | `easky-test-buttercup`  | Run buttercup tests               |
+| `easky-test-melpazoid`  | Run melpazoid tests               |
 
 > 💡 These external tools are automatically installed in your sandbox!
-
-### 💻 Direct execution
-
-Sometimes you would want to execute some command directly!
-
-| Commands      | Description               |
-|---------------|---------------------------|
-| `easky-eask`  | Run the Eask CLI directly |
-| `easky-exec`  | Run `eask exec`           |
-| `easky-emacs` | Run `eask emacs`          |
-| `easky-eval`  | Run `eask eval`           |
-| `easky-load`  | Run `eask load`           |
 
 ## 🔧 Customization
 

@@ -959,6 +959,14 @@ Argument ACTION is used to select checker's action."
                 "  (script \"test\" \"echo Hi!~\")"
                 "\n\nThen re-run this command once again!")))))
 
+;;;###autoload
+(defun easky-docker ()
+  "Run eask docker."
+  (interactive)
+  (let ((version (read-string "Emacs version: (minimum 26.1) "))
+        (command (read-string "Eask command: ")))
+    (easky--display (easky-command "docker" version command))))
+
 ;;
 ;;; Install
 
