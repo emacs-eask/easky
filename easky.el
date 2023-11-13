@@ -84,7 +84,7 @@
   :type 'float
   :group 'easky)
 
-(defcustom easky-extra-args '()
+(defcustom easky-extra-args '("--show-hidden")
   "Eask's extra arguments."
   :type 'list
   :group 'easky)
@@ -555,6 +555,17 @@ is the implementation."
           (call-interactively command)
         (user-error "Command %s not implemented yet, please consider report it to us!" command)))))
 
+;;;###autoload
+(defun easky-source ()
+  "Start Eask source."
+  (interactive)
+  (easky--exec-with-help
+      (easky-command "source" "--help")  2 "Select `eask source' command: "
+    (let ((command (intern (format "easky-source-%s" command))))
+      (if (fboundp command)
+          (call-interactively command)
+        (user-error "Command %s not implemented yet, please consider report it to us!" command)))))
+
 ;;
 ;; (@* "Commands" )
 ;;
@@ -670,6 +681,13 @@ This can be replaced with `easky-package-install' command."
   "List available keywords that can be used in the header section."
   (interactive)
   (easky--display (easky-command "keywords")))
+
+;;;###autoload
+(defun easky-bump ()
+  "Bump version for your package or Eask-file."
+  (interactive)
+  (let ((levels (read-string "Levels: ")))
+    (easky--display (easky-command "bump" levels))))
 
 ;;;###autoload
 (defun easky-cat ()
@@ -1375,6 +1393,30 @@ Argument DEST is the destination folder, default is set to `dist'."
     (let ((dir (read-directory-name "Select directory for `test melpazoid': ")))
       (easky--display (easky-command "test" "melpazoid" dir)))
     nil))
+
+;;
+;;; Control DSL
+
+;;;###autoload
+(defun easky-source-add ()
+  "Add an archive source."
+  (interactive)
+  (let ((name (read-string "Source name to add: "))
+        (path (read-string "Location/URL: ")))
+    (easky--display (easky-command "source" "add" name path))))
+
+;;;###autoload
+(defun easky-source-delete ()
+  "Delete an archive source."
+  (interactive)
+  (let ((name (read-string "Source name to delete: ")))
+    (easky--display (easky-command "source" "delete" name))))
+
+;;;###autoload
+(defun easky-source-list ()
+  "List all sources."
+  (interactive)
+  (easky--display (easky-command "source" "list")))
 
 (provide 'easky)
 ;;; easky.el ends here
