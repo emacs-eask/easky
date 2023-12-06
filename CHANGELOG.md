@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.1.1 (Unreleased)
 > Released N/A
 
-* N/A
+* Makes `easky-init` convert directory names to Lisp package names (#3)
 
 ## 0.1.0
 > Released Oct 08, 2023
