@@ -719,7 +719,7 @@ This can be replaced with `easky-package-install' command."
   (interactive
    (list (read-directory-name "Where you want to place your Eask-file: ")))
   (let* ((files (eask-api-files dir))
-         (new-name (expand-file-name "Eask"))
+         (new-name (expand-file-name "Eask" dir))
          (base-name)
          (invalid-name))
     (when (and files
@@ -741,12 +741,8 @@ This can be replaced with `easky-package-install' command."
         (easky--inhibit-log (message "Checking filename..."))
         (sleep-for 0.2)))
     ;; Starting Eask-file creation!
-    (let* ((project-name (thread-last
-                           (file-name-nondirectory (directory-file-name default-directory))
-                           (downcase)
-                           ;; Remove customary prefixes and suffixes in Emacs Lisp repository names
-                           (replace-regexp-in-string (eval-when-compile (rx bos "emacs-")) "")
-                           (replace-regexp-in-string (eval-when-compile (rx (in ".-") "el" eos)) "")))
+    (let* ((project-dir (file-name-nondirectory (directory-file-name dir)))
+           (project-name (eask-guess-package-name project-dir))
            (package-name (read-string (format "package name: (%s) " project-name) nil nil project-name))
            (version (read-string "version: (1.0.0) " nil nil "1.0.0"))
            (description (read-string "description: "))
