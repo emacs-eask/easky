@@ -752,15 +752,17 @@ This can be replaced with `easky-package-install' command."
            (emacs-version (read-string "emacs version: (26.1) " nil nil "26.1"))
            (website (read-string "website: "))
            (keywords (read-string "keywords: "))
-           (keywords (split-string keywords "[, ]"))
-           (keywords (string-join keywords "\" \""))
+           (keywords (if (string-match-p "," keywords)
+                         (split-string keywords ",[ \t\n]*" t "[ ]+")
+	               (split-string keywords "[ \t\n]+" t "[ ]+")))
+           (keywords (mapconcat (lambda (s) (format "%S" s)) keywords " "))
            (content (format
                      "(package \"%s\"
          \"%s\"
          \"%s\")
 
 (website-url \"%s\")
-(keywords \"%s\")
+(keywords %s)
 
 (package-file \"%s\")
 
