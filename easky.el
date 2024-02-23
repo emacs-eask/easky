@@ -722,11 +722,13 @@ This can be replaced with `easky-package-install' command."
          (files (eask-api-files dir))
          (new-name (expand-file-name "Eask" dir))
          (base-name)
-         (invalid-name))
+         (invalid-name)
+         (continue))
     (when (and files
-               (yes-or-no-p (concat "Eask-file already exist,\n\n  "
-                                    (mapconcat #'identity files "\n  ")
-                                    "\n\nContinue the creation? ")))
+               (setq continue
+                     (yes-or-no-p (concat "Eask-file already exist,\n\n  "
+                                          (mapconcat #'identity files "\n  ")
+                                          "\n\nContinue the creation? "))))
       (while (or (file-exists-p new-name) invalid-name)
         (setq new-name (read-file-name
                         (format
@@ -740,7 +742,8 @@ This can be replaced with `easky-package-install' command."
               base-name (file-name-nondirectory (directory-file-name new-name))
               invalid-name (not (eask-api-check-filename base-name)))
         (easky--inhibit-log (message "Checking filename..."))
-        (sleep-for 0.2))
+        (sleep-for 0.2)))
+    (when continue
       ;; Starting Eask-file creation!
       (let* ((project-dir (file-name-nondirectory (directory-file-name dir)))
              (project-name (eask-guess-package-name project-dir))
