@@ -611,6 +611,11 @@ Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
            (not (string= dir-locals-file candidate)))
       (file-directory-p candidate)))
 
+(defun easky--select-feature-files (candidate)
+  "Return t if CANDIDATE is either directory or an feature file."
+  (or (string-suffix-p ".feature" candidate)
+      (file-directory-p candidate)))
+
 ;;;###autoload
 (defun easky-help ()
   "Print Eask help manual."
@@ -1400,6 +1405,18 @@ Argument DEST is the destination folder, default is set to `dist'."
       (easky--display (easky-command "test" "buttercup" file)))
     (let ((wildcards (read-string "Wildcards: ")))
       (easky--display (easky-command "test" "buttercup" wildcards)))))
+
+;;;###autoload
+(defun easky-test-ecukes ()
+  "Run ecukes test."
+  (interactive)
+  (easky--exec-with-files "Select `test ecukes' action: "
+    (easky--display (easky-command "test" "ecukes"))
+    (let ((file (read-file-name "Select file for `test ecukes': "
+                                nil nil t nil #'easky--select-feature-files)))
+      (easky--display (easky-command "test" "ecukes" file)))
+    (let ((wildcards (read-string "Wildcards: ")))
+      (easky--display (easky-command "test" "ecukes" wildcards)))))
 
 ;;;###autoload
 (defun easky-test-melpazoid ()
