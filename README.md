@@ -29,7 +29,7 @@ Easky is out of the box and comes along with many features.
 ### 🔍 Step 1. Install [Eask CLI](https://github.com/emacs-eask/cli)
 
 Download binaries from their [release page](https://github.com/emacs-eask/cli/releases)
-, and extracted somewhere on your machine. Then add the path `/path/to/eask/`
+, and extract the file somewhere on your machine. Then add the path `/path/to/eask/`
 to environment `PATH`, so you can access it anywhere.
 
 For more installation options, see https://emacs-eask.github.io/Getting-Started/Install-Eask/.
@@ -144,11 +144,17 @@ commands:
 | `easky-generate-autoloads`          | Generate `-autoloads.el` file, and print it out |
 | `easky-generate-pkg-file`           | Generate `-pkg.el`, and printed it out          |
 | `easky-generate-license`            | Generate LICENSE file                           |
+| `easky-generate-ignore`             | Generate ignore file.                           |
+| `easky-generate-test`               | Master command for `generate test`              |
+| `easky-generate-test-ert`           | Setup test files for [ert][] tests.             |
+| `easky-generate-test-ert-runner`    | Setup test files for [ert-runner][].            |
+| `easky-generate-test-buttercup`     | Setup test files for [buttercup][].             |
+| `easky-generate-test-ecukes`        | Setup test files for [ecukes][].                |
 | `easky-generate-workflow`           | Master command for `generate workflow`          |
-| `easky-generate-workflow-circle-ci` | Generate CircleCI test file                     |
-| `easky-generate-workflow-github`    | Generate GitHub Actions test file               |
-| `easky-generate-workflow-gitlab`    | Generate GitLab Runner test file                |
-| `easky-generate-workflow-travis-ci` | Generate Travis CI test file                    |
+| `easky-generate-workflow-circle-ci` | Generate [CircleCI][] test file                 |
+| `easky-generate-workflow-github`    | Generate [GitHub Actions][] test file           |
+| `easky-generate-workflow-gitlab`    | Generate [GitLab Runner][] test file            |
+| `easky-generate-workflow-travis-ci` | Generate [Travis CI][] test file                |
 
 ### 💻 Execution
 
@@ -218,12 +224,13 @@ Commands to control DSL:
 
 Commands to help you test your packages:
 
-| Commands                | Description                       |
-|-------------------------|-----------------------------------|
-| `easky-test-ert`        | Run ert tests                     |
-| `easky-test-ert-runner` | Run ert test through `ert-runner` |
-| `easky-test-buttercup`  | Run buttercup tests               |
-| `easky-test-melpazoid`  | Run melpazoid tests               |
+| Commands                | Description                             |
+|-------------------------|-----------------------------------------|
+| `easky-test-ert`        | Run [ert][] tests                       |
+| `easky-test-ert-runner` | Run [ert][] test through [ert-runner][] |
+| `easky-test-buttercup`  | Run [buttercup][] tests                 |
+| `easky-test-ecukes`     | Run [ecukes][] tests                    |
+| `easky-test-melpazoid`  | Run [melpazoid][] tests                 |
 
 > 💡 These external tools are automatically installed in your sandbox!
 
@@ -231,7 +238,7 @@ Commands to help you test your packages:
 
 ### 🧪 Variables
 
-List of variables that interact with `easky`'s behaviour.
+List of variables that interact with `easky`'s behaviours.
 
 - `easky-strip-header` -  output header while displaying. (Default: `t`)
 - `easky-display-function` - Function to display Easky's result. (Default: `#'lv-message`)
@@ -340,3 +347,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 See [`LICENSE`](./LICENSE.txt) for details.
+
+
+<!-- Links -->
+
+[CircleCI]: https://circleci.com/
+[GitHub Actions]: https://github.com/features/actions
+[GitLab Runner]: https://docs.gitlab.com/runner/
+[Travis CI]: https://www.travis-ci.com/
+
+[ert]: https://www.gnu.org/software/emacs/manual/html_node/ert/
+[ert-runner]: https://github.com/rejeep/ert-runner.el
+[buttercup]: https://github.com/jorgenschaefer/emacs-buttercup
+[ecukes]: https://github.com/ecukes/ecukes
+[melpazoid]: https://github.com/riscy/melpazoid

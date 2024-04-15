@@ -1117,6 +1117,47 @@ Arguments FORM-1 and FORM-2 are execution by each file action."
                                    (when filename filename)))))
 
 ;;;###autoload
+(defun easky-generate-test ()
+  "Generate workflow file."
+  (interactive)
+  (easky--exec-with-help
+      (easky-command "generate" "test" "--help") 3 "Select `eask generate test' command: "
+    (let ((command (intern (format "easky-generate-test-%s" command))))
+      (if (fboundp command)
+          (call-interactively command)
+        (user-error "Command %s not implemented yet, please consider report it to us!" command)))))
+
+;;;###autoload
+(defun easky-generate-test-ert ()
+  "Setup test files for ert tests."
+  (interactive)
+  (let* ((prompt (format "Name of the unit tests: "))
+         (filenames (read-string prompt)))
+    (easky--display (apply #'easky-command (append '("generate" "test" "ert")
+                                                   (split-string filenames " "))))))
+
+;;;###autoload
+(defun easky-generate-test-ert-runner ()
+  "Setup test files for ert-runner."
+  (interactive)
+  (let* ((prompt (format "Name of the unit tests: "))
+         (filenames (read-string prompt)))
+    (easky--display (apply #'easky-command (append '("generate" "test" "ert-runner")
+                                                   (split-string filenames " "))))))
+
+;;;###autoload
+(defun easky-generate-test-buttercup ()
+  "Setup test files for buttercup."
+  (interactive)
+  (easky--display (easky-command "generate" "test" "buttercup")))
+
+;;;###autoload
+(defun easky-generate-test-ecukes ()
+  "Setup test files for ecukes."
+  (interactive)
+  (easky--display (easky-command "generate" "test" "ecukes")))
+
+;;;###autoload
 (defun easky-generate-workflow ()
   "Generate workflow file."
   (interactive)
