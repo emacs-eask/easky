@@ -231,7 +231,7 @@ We use number to name our arguments, ARG0 and ARGS."
                (when (stringp easky--error-message)
                  (format "[ERROR] %s\n\n" easky--error-message))
                "Error loading Eask-file, few suggestions: \n\n"
-               "  [1] Lint your Eask-file with command `eask check-eask [EASK-FILE]`\n"
+               "  [1] Lint your Eask-file with command `eask analyze [EASK-FILE]`\n"
                "  [2] Make sure your Eask-file doesn't contain any invalid syntax"
                "\n\nHere are useful tools to help you edit Eask-file:\n\n"
                "  | Package       | Description                       | Repository URL                              |\n"
@@ -576,7 +576,7 @@ is the implementation."
   '(("All files (Default)" . "Select all files defined in your Eask-file")
     ("Select file"         . "Select a file through completing-read")
     ("Enter wildcards"     . "Enter wildcards pattern"))
-  "Options for command `check-eask'.")
+  "Options for command `analyze'.")
 
 (defmacro easky--exec-with-files (prompt form-1 form-2 form-3)
   "Execute command with file selected.
@@ -704,6 +704,19 @@ This can be replaced with `easky-package-install' command."
     (easky--display (easky-command "cat" wildcards))))
 
 ;;;###autoload
+(defun easky-concat ()
+  "Concatenate all source files."
+  (interactive)
+  (easky--display (easky-command "concat")))
+
+;;;###autoload
+(defun easky-loc ()
+  "Print LOC information."
+  (interactive)
+  (let ((pattern (read-string "Files: ")))
+    (easky--display (easky-command "loc" pattern))))
+
+;;;###autoload
 (defun easky-path ()
   "Print the PATH (exec-path) from Eask sandbox."
   (interactive)
@@ -826,47 +839,57 @@ This can be replaced with `easky-package-install' command."
   (easky--display (easky-command "upgrade-eask")))
 
 ;;
+;;; Documentation
+
+;;;###autoload
+(defun easky-docs ()
+  "Build documentation."
+  (interactive)
+  (let ((pattern (read-string "Files: ")))
+    (easky--display (easky-command "docs" pattern))))
+
+;;
 ;;; Eask-file Checker
 
-(defconst easky-check-eask-options
+(defconst easky-analyze-options
   '(("All Eask-files (Default)" . "Check all eask files")
     ("Pick a Eask-file"         . "Select an Eask-file through completing-read"))
-  "Options for command `check-eask'.")
+  "Options for command `analyze'.")
 
-(defun easky-check-eask-collection (string predicate action)
-  "Collection arguments for function `easky-check-eask'.
+(defun easky-analyze-collection (string predicate action)
+  "Collection arguments for function `easky-analyze'.
 
 Arguments STRING, PREDICATE and ACTION are default value for collection
 argument."
   (if (eq action 'metadata)
-      (let ((offset (easky--completing-frame-offset easky-check-eask-options)))
+      (let ((offset (easky--completing-frame-offset easky-analyze-options)))
         `(metadata
           (display-sort-function . ,#'identity)
           (annotation-function
            . ,(lambda (cand)
                 (concat (propertize " " 'display `((space :align-to (- right ,offset))))
-                        (cdr (assoc cand easky-check-eask-options)))))))
-    (complete-with-action action easky-check-eask-options string predicate)))
+                        (cdr (assoc cand easky-analyze-options)))))))
+    (complete-with-action action easky-analyze-options string predicate)))
 
 ;;;###autoload
-(defun easky-check-eask (action)
+(defun easky-analyze (action)
   "Run Eask-file checker.
 
 Argument ACTION is used to select checker's action."
   (interactive
-   (list (completing-read "Select `check-eask' action: "
-                          #'easky-check-eask-collection nil t nil nil
-                          (car (nth 0 easky-check-eask-options)))))
-  (let* ((options (mapcar #'car easky-check-eask-options))
+   (list (completing-read "Select `analyze' action: "
+                          #'easky-analyze-collection nil t nil nil
+                          (car (nth 0 easky-analyze-options)))))
+  (let* ((options (mapcar #'car easky-analyze-options))
          (index (cl-position action options :test 'string=)))
     (pcase index
-      (0 (easky--display (easky-command "check-eask")))
-      (1 (let ((file (read-file-name "Select file for `check-eask': "
+      (0 (easky--display (easky-command "analyze")))
+      (1 (let ((file (read-file-name "Select file for `analyze': "
                                      nil nil t nil
                                      (lambda (cand)
                                        (or (eask-api-check-filename cand)
                                            (file-directory-p cand))))))
-           (easky--display (easky-command "check-eask" file)))))))
+           (easky--display (easky-command "analyze" file)))))))
 
 ;;
 ;;; Execution

@@ -94,7 +94,7 @@ Some conditions may make Eask CLI unusable:
 
 ## 📇 Support Commands
 
-All in-one commands, these are commands we recommend you start with!
+All-in-one commands, these are commands we recommend you start with!
 
 | Commands         | Description                                    |
 |------------------|------------------------------------------------|
@@ -129,6 +129,10 @@ commands:
 | `easky-version`      | Print Eask version                                     |
 | `easky-upgrade-eask` | Upgrade Eask CLI                                       |
 | `easky-stop`         | Terminate the current process                          |
+| `easky-bump`         | Bump version for your package or Eask-file.            |
+| `easky-cat`          | View filename(s).                                      |
+| `easky-concat`       | Concatenate all source files.                          |
+| `easky-loc`          | Print LOC information.                                 |
 
 ### 🔈 Create
 
@@ -155,6 +159,14 @@ commands:
 | `easky-generate-workflow-github`    | Generate [GitHub Actions][] test file           |
 | `easky-generate-workflow-gitlab`    | Generate [GitLab Runner][] test file            |
 | `easky-generate-workflow-travis-ci` | Generate [Travis CI][] test file                |
+
+### 📚 Documentation
+
+Commands used to build documentation site.
+
+| Commands     | Description          |
+|--------------|----------------------|
+| `easky-docs` | Build documentation. |
 
 ### 💻 Execution
 
@@ -210,16 +222,6 @@ Commands to link local packages:
 | `easky-link-delete` | Delete local linked packages |
 | `easky-link-list`   | List all project links       |
 
-### 🔗 Control DSL
-
-Commands to control DSL:
-
-| Commands              | Description              |
-|-----------------------|--------------------------|
-| `easky-source-add`    | Add an archive source    |
-| `easky-source-delete` | Delete an archive source |
-| `easky-source-list`   | List all sources         |
-
 ### 🔍 Testing
 
 Commands to help you test your packages:
@@ -233,6 +235,24 @@ Commands to help you test your packages:
 | `easky-test-melpazoid`  | Run [melpazoid][] tests                 |
 
 > 💡 These external tools are automatically installed in your sandbox!
+
+### 🔗 Control DSL
+
+Commands to control DSL:
+
+| Commands              | Description              |
+|-----------------------|--------------------------|
+| `easky-source-add`    | Add an archive source    |
+| `easky-source-delete` | Delete an archive source |
+| `easky-source-list`   | List all sources         |
+
+## 📈 Checker
+
+Commands to check your Eask-file.
+
+| Commands        | Description            |
+|-----------------|------------------------|
+| `easky-analyze` | Run Eask-file checker. |
 
 ## 🔧 Customization
 
