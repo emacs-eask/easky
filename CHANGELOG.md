@@ -10,6 +10,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 * Makes `easky-init` convert directory names to Lisp package names (#3)
 * feat: Add test `ecukes` command (#5)
 * feat: Add generate test commands (602e43a558e95823ac0b3e84f48db7c987da132a)
+* feat Add `recompile` (778d2c0ac495ec8336e068e992614b63e4e70556)
 
 ## 0.1.0
 > Released Oct 08, 2023
