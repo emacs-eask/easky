@@ -143,29 +143,35 @@ All-in-one commands, these are commands we recommend you start with!
 The following are the functions provided by `easky`, you can `M-x` with these
 commands:
 
-| Commands             | Description                                            |
-|----------------------|--------------------------------------------------------|
-| `easky-init`         | Create Eask-file and initialize it                     |
-| `easky-info`         | Print Eask-file information                            |
-| `easky-locate`       | Print Eask installed location                          |
-| `easky-files`        | List all package files.                                |
-| `easky-archives`     | List in used archives                                  |
-| `easky-run`          | Execute Eask's script (with completion)                |
-| `easky-package`      | Package (build) your package                           |
-| `easky-install`      | Install packages, see also `easky-package-install`     |
-| `easky-uninstall`    | Untnstall packages, see also `easky-package-delete`    |
-| `easky-reinstall`    | Reinstall packages, see also `easky-package-reinstall` |
-| `easky-upgrade`      | Upgrade packages., see also `easky-package-update`     |
-| `easky-install-deps` | Install all package dependencies                       |
-| `easky-recipe`       | Recommend me a recipe format.                          |
-| `easky-help`         | Print Eask help manual                                 |
-| `easky-version`      | Print Eask version                                     |
-| `easky-upgrade-eask` | Upgrade Eask CLI                                       |
-| `easky-stop`         | Terminate the current process                          |
-| `easky-bump`         | Bump version for your package or Eask-file.            |
-| `easky-cat`          | View filename(s).                                      |
-| `easky-concat`       | Concatenate all source files.                          |
-| `easky-loc`          | Print LOC information.                                 |
+| Commands             | Description                                                     |
+|----------------------|-----------------------------------------------------------------|
+| `easky-init`         | Create Eask-file and initialize it                              |
+| `easky-info`         | Print Eask-file information                                     |
+| `easky-locate`       | Print Eask installed location                                   |
+| `easky-compile`      | Byte-compile elc files.                                         |
+| `easky-recompile`    | Byte-recompile elc files.                                       |
+| `easky-search`       | Search available packages with query.                           |
+| `easky-files`        | List all package files.                                         |
+| `easky-archives`     | List in used archives                                           |
+| `easky-keywords`     | List available keywords that can be used in the header section. |
+| `easky-run`          | Execute Eask's script (with completion)                         |
+| `easky-package`      | Package (build) your package                                    |
+| `easky-install`      | Install packages, see also `easky-package-install`              |
+| `easky-uninstall`    | Untnstall packages, see also `easky-package-delete`             |
+| `easky-reinstall`    | Reinstall packages, see also `easky-package-reinstall`          |
+| `easky-upgrade`      | Upgrade packages., see also `easky-package-update`              |
+| `easky-install-deps` | Install all package dependencies                                |
+| `easky-recipe`       | Recommend me a recipe format.                                   |
+| `easky-help`         | Print Eask help manual                                          |
+| `easky-version`      | Print Eask version                                              |
+| `easky-upgrade-eask` | Upgrade Eask CLI                                                |
+| `easky-stop`         | Terminate the current process                                   |
+| `easky-bump`         | Bump version for your package or Eask-file.                     |
+| `easky-cat`          | View filename(s).                                               |
+| `easky-concat`       | Concatenate all source files.                                   |
+| `easky-loc`          | Print LOC information.                                          |
+| `easky-path`         | Print the PATH (`exec-path`) from Eask sandbox.                 |
+| `easky-load-path`    | Print the `load-path' from Eask sandbox.                        |
 
 ### 🔈 Create
 

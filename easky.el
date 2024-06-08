@@ -730,7 +730,7 @@ This can be replaced with `easky-package-install' command."
 
 ;;;###autoload
 (defun easky-path ()
-  "Print the PATH (exec-path) from Eask sandbox."
+  "Print the PATH (`exec-path') from Eask sandbox."
   (interactive)
   (easky--display (easky-command "path")))
 
