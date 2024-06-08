@@ -648,7 +648,7 @@ Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
 
 ;;;###autoload
 (defun easky-compile ()
-  "Clean up .eask directory."
+  "Byte-compile elc files."
   (interactive)
   (easky--exec-with-files "Select `compile' action: "
     (easky--display (easky-command "compile"))
@@ -657,6 +657,18 @@ Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
       (easky--display (easky-command "compile" file)))
     (let ((wildcards (read-string "Wildcards: ")))
       (easky--display (easky-command "compile" wildcards)))))
+
+;;;###autoload
+(defun easky-recompile ()
+  "Byte-recompile elc files."
+  (interactive)
+  (easky--exec-with-files "Select `recompile' action: "
+    (easky--display (easky-command "recompile"))
+    (let ((file (read-file-name "Select file for `recompile': "
+                                nil nil t nil #'easky--select-el-files)))
+      (easky--display (easky-command "recompile" file)))
+    (let ((wildcards (read-string "Wildcards: ")))
+      (easky--display (easky-command "recompile" wildcards)))))
 
 ;;;###autoload
 (defun easky-search (query)
