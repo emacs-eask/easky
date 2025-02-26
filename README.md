@@ -9,39 +9,39 @@
 
 [![CI](https://github.com/emacs-eask/easky/actions/workflows/test.yml/badge.svg)](https://github.com/emacs-eask/easky/actions/workflows/test.yml)
 
-`Easky` is the interface to control [Eask CLI](https://github.com/emacs-eask/cli),
+`Easky` is the interface to control [Eask CLI][],
 it's a package manager and sandbox tools to test and manage your elisp packages.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
-- [🏆 Features](#🏆-features)
-- [💾 Installation](#💾-installation)
-  - [🔍 Step 1. Install [Eask CLI](https://github.com/emacs-eask/cli)](#🔍-step-1-install-eask-clihttpsgithubcomemacs-easkcli)
-  - [🔍 Step 2. Install `Easky` (this package)](#🔍-step-2-install-easky-this-package)
+- [🏆 Features](#-features)
+- [💾 Installation](#-installation)
+  - [🔍 Step 1. Install Eask CLI](#-step-1-install-eask-cli)
+  - [🔍 Step 2. Install `Easky` (this package)](#-step-2-install-easky-this-package)
     - [package.el](#packageel)
     - [use-package](#use-package)
     - [Manual installation](#manual-installation)
-- [🔰 Quick start](#🔰-quick-start)
-- [📇 Support Commands](#📇-support-commands)
-  - [🔈 Create](#🔈-create)
-  - [📚 Generate](#📚-generate)
-  - [📚 Documentation](#📚-documentation)
-  - [💻 Execution](#💻-execution)
-  - [🧹 Cleaning](#🧹-cleaning)
-  - [📝 Linting](#📝-linting)
-  - [🔗 Linking](#🔗-linking)
-  - [🔍 Testing](#🔍-testing)
-  - [🔗 Control DSL](#🔗-control-dsl)
-- [📈 Checker](#📈-checker)
-- [🔧 Customization](#🔧-customization)
-  - [🧪 Variables](#🧪-variables)
-- [🔌 Plugins](#🔌-plugins)
-  - [📦 `package` module](#📦-package-module)
-- [🌟 Other packages you may be interested](#🌟-other-packages-you-may-be-interested)
-- [🛠️ Contribute](#🛠️-contribute)
-  - [🔬 Development](#🔬-development)
-- [⚜️ License](#⚜️-license)
+- [🔰 Quick start](#-quick-start)
+- [📇 Support Commands](#-support-commands)
+  - [🔈 Create](#-create)
+  - [🏭 Generate](#-generate)
+  - [📚 Documentation](#-documentation)
+  - [💻 Execution](#-execution)
+  - [🧹 Cleaning](#-cleaning)
+  - [📝 Linting](#-linting)
+  - [🔗 Linking](#-linking)
+  - [🔍 Testing](#-testing)
+  - [🔗 Control DSL](#-control-dsl)
+- [📈 Checker](#-checker)
+- [🔧 Customization](#-customization)
+  - [🧪 Variables](#-variables)
+- [🔌 Plugins](#-plugins)
+  - [📦 `package` module](#-package-module)
+- [🌟 Other packages you may be interested](#-other-packages-you-may-be-interested)
+- [🛠️ Contribute](#-contribute)
+  - [🔬 Development](#-development)
+- [⚜️ License](#-license)
 
 <!-- markdown-toc end -->
 
@@ -59,7 +59,7 @@ Easky is out of the box and comes along with many features.
 
 ## 💾 Installation
 
-### 🔍 Step 1. Install [Eask CLI](https://github.com/emacs-eask/cli)
+### 🔍 Step 1. Install Eask CLI
 
 Download binaries from their [release page](https://github.com/emacs-eask/cli/releases)
 , and extract the file somewhere on your machine. Then add the path `/path/to/eask/`
@@ -409,6 +409,8 @@ See [`LICENSE`](./LICENSE.txt) for details.
 
 
 <!-- Links -->
+
+[Eask CLI]: https://github.com/emacs-eask/cli
 
 [CircleCI]: https://circleci.com/
 [GitHub Actions]: https://github.com/features/actions
