@@ -88,7 +88,7 @@
 
 (defcustom easky-extra-args '("--show-hidden")
   "Eask's extra arguments."
-  :type 'list
+  :type '(list string)
   :group 'easky)
 
 (defconst easky-buffer-name "*easky*"
@@ -1095,6 +1095,20 @@ Arguments FORM-1 and FORM-2 are execution by each file action."
                       '("Yes" "No") nil t nil nil "No")))
     (easky--display (easky-command "install-deps" (when (string= install-dev "Yes")
                                                     "--dev")))))
+
+;;;###autoload
+(defun easky-install-file ()
+  "Install packages through files."
+  (interactive)
+  (let ((pattern (read-string "Specify files: ")))
+    (easky--display (easky-command "install-file" pattern))))
+
+;;;###autoload
+(defun easky-install-vc ()
+  "Install packages through version controls."
+  (interactive)
+  (let ((pattern (read-string "Specify specifications: ")))
+    (easky--display (easky-command "install-vc" pattern))))
 
 ;;
 ;;; Create

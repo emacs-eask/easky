@@ -156,11 +156,13 @@ commands:
 | `easky-keywords`     | List available keywords that can be used in the header section. |
 | `easky-run`          | Execute Eask's script (with completion)                         |
 | `easky-package`      | Package (build) your package                                    |
-| `easky-install`      | Install packages, see also `easky-package-install`              |
-| `easky-uninstall`    | Untnstall packages, see also `easky-package-delete`             |
-| `easky-reinstall`    | Reinstall packages, see also `easky-package-reinstall`          |
-| `easky-upgrade`      | Upgrade packages., see also `easky-package-update`              |
+| `easky-install`      | Install packages, see also `easky-package-install`.             |
+| `easky-uninstall`    | Untnstall packages, see also `easky-package-delete`.            |
+| `easky-reinstall`    | Reinstall packages, see also `easky-package-reinstall`.         |
+| `easky-upgrade`      | Upgrade packages., see also `easky-package-update`.             |
 | `easky-install-deps` | Install all package dependencies                                |
+| `easky-install-file` | Install packages through files.                                 |
+| `easky-install-vc`   | Install packages through version controls.                      |
 | `easky-recipe`       | Recommend me a recipe format.                                   |
 | `easky-help`         | Print Eask help manual                                          |
 | `easky-version`      | Print Eask version                                              |
