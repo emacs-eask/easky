@@ -1,3 +1,5 @@
+;; -*- mode: eask; lexical-binding: t -*-
+
 (package "easky"
          "0.1.0"
          "Control the Eask command-line interface")
