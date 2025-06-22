@@ -177,10 +177,11 @@ commands:
 
 ### 🔈 Create
 
-| Commands               | Description                         |
-|------------------------|-------------------------------------|
-| `easky-create-package` | Create a new elisp package          |
-| `easky-create-elpa`    | Create a new ELPA using github-elpa |
+| Commands                  | Description                            |
+|---------------------------|----------------------------------------|
+| `easky-create-package`    | Create a new elisp package.            |
+| `easky-create-elpa`       | Create a new ELPA using `github-elpa`. |
+| `easky-create-el-project` | Create a new ELPA using `el-project`.  |
 
 ### 🏭 Generate
 

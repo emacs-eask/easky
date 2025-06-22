@@ -1123,11 +1123,19 @@ Arguments FORM-1 and FORM-2 are execution by each file action."
 
 ;;;###autoload
 (defun easky-create-elpa ()
-  "Create a new ELPA using github-elpa."
+  "Create a new ELPA using `github-elpa'."
   (interactive)
   (user-error
    (concat "This command is currently not supported; please use the command line "
            "with the command `eask create elpa`!")))
+
+;;;###autoload
+(defun easky-create-el-project ()
+  "Create a new project with `el-project'."
+  (interactive)
+  (user-error
+   (concat "This command is currently not supported; please use the command line "
+           "with the command `eask create el-project`!")))
 
 ;;
 ;;; Generate
