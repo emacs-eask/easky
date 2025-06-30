@@ -17,30 +17,30 @@ it's a package manager and sandbox tools to test and manage your elisp packages.
 
 - [🏆 Features](#-features)
 - [💾 Installation](#-installation)
-  - [🔍 Step 1. Install Eask CLI](#-step-1-install-eask-cli)
-  - [🔍 Step 2. Install `Easky` (this package)](#-step-2-install-easky-this-package)
-    - [package.el](#packageel)
-    - [use-package](#use-package)
-    - [Manual installation](#manual-installation)
+- [🔍 Step 1. Install Eask CLI](#-step-1-install-eask-cli)
+- [🔍 Step 2. Install `Easky` (this package)](#-step-2-install-easky-this-package)
+- [package.el](#packageel)
+- [use-package](#use-package)
+- [Manual installation](#manual-installation)
 - [🔰 Quick start](#-quick-start)
 - [📇 Support Commands](#-support-commands)
-  - [🔈 Create](#-create)
-  - [🏭 Generate](#-generate)
-  - [📚 Documentation](#-documentation)
-  - [💻 Execution](#-execution)
-  - [🧹 Cleaning](#-cleaning)
-  - [📝 Linting](#-linting)
-  - [🔗 Linking](#-linking)
-  - [🔍 Testing](#-testing)
-  - [🔗 Control DSL](#-control-dsl)
+- [🔈 Create](#-create)
+- [🏭 Generate](#-generate)
+- [📚 Documentation](#-documentation)
+- [💻 Execution](#-execution)
+- [🧹 Cleaning](#-cleaning)
+- [📝 Linting](#-linting)
+- [🔗 Linking](#-linking)
+- [🔍 Testing](#-testing)
+- [🔗 Control DSL](#-control-dsl)
 - [📈 Checker](#-checker)
 - [🔧 Customization](#-customization)
-  - [🧪 Variables](#-variables)
+- [🧪 Variables](#-variables)
 - [🔌 Plugins](#-plugins)
-  - [📦 `package` module](#-package-module)
+- [📦 `package` module](#-package-module)
 - [🌟 Other packages you may be interested](#-other-packages-you-may-be-interested)
 - [🛠️ Contribute](#-contribute)
-  - [🔬 Development](#-development)
+- [🔬 Development](#-development)
 - [⚜️ License](#-license)
 
 <!-- markdown-toc end -->
@@ -190,12 +190,12 @@ commands:
 | `easky-generate-autoloads`          | Generate `-autoloads.el` file, and print it out |
 | `easky-generate-pkg-file`           | Generate `-pkg.el`, and printed it out          |
 | `easky-generate-license`            | Generate LICENSE file                           |
-| `easky-generate-ignore`             | Generate ignore file.                           |
+| `easky-generate-ignore`             | Generate ignore file                            |
 | `easky-generate-test`               | Master command for `generate test`              |
-| `easky-generate-test-ert`           | Setup test files for [ert][] tests.             |
-| `easky-generate-test-ert-runner`    | Setup test files for [ert-runner][].            |
-| `easky-generate-test-buttercup`     | Setup test files for [buttercup][].             |
-| `easky-generate-test-ecukes`        | Setup test files for [ecukes][].                |
+| `easky-generate-test-ert`           | Setup test files for [ert][] tests              |
+| `easky-generate-test-ert-runner`    | Setup test files for [ert-runner][]             |
+| `easky-generate-test-buttercup`     | Setup test files for [buttercup][]              |
+| `easky-generate-test-ecukes`        | Setup test files for [ecukes][]                 |
 | `easky-generate-workflow`           | Master command for `generate workflow`          |
 | `easky-generate-workflow-circle-ci` | Generate [CircleCI][] test file                 |
 | `easky-generate-workflow-github`    | Generate [GitHub Actions][] test file           |
@@ -241,16 +241,18 @@ Commands to keep your project clean:
 
 Commands to help you lint your packages:
 
-| Commands                   | Description         |
-|----------------------------|---------------------|
-| `easky-lint-checkdoc`      | Run checkdoc        |
-| `easky-lint-check-declare` | Run check-declare   |
-| `easky-lint-elint`         | Run elint           |
-| `easky-lint-elsa`          | Run elsa            |
-| `easky-lint-indent`        | Run indent-linet    |
-| `easky-lint-keywords`      | Run keywords linter |
-| `easky-lint-license`       | Run license linter  |
-| `easky-lint-regexps`       | Run relint          |
+| Commands                   | Description               |
+|----------------------------|---------------------------|
+| `easky-lint-checkdoc`      | Run checkdoc              |
+| `easky-lint-check-declare` | Run check-declare         |
+| `easky-lint-elint`         | Run elint                 |
+| `easky-lint-elsa`          | Run elsa                  |
+| `easky-lint-indent`        | Run indent-linet          |
+| `easky-lint-package`       | Run package-lint          |
+| `easky-lint-regexps`       | Run relint                |
+| `easky-lint-keywords`      | Run keywords linter       |
+| `easky-lint-license`       | Run license linter        |
+| `easky-lint-org`           | Run org-lint on Org files |
 
 > 💡 These extenral tools are automatically installed in your sandbox!
 

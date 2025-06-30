@@ -611,10 +611,18 @@ Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
            (not (string= dir-locals-file candidate)))
       (file-directory-p candidate)))
 
-(defun easky--select-feature-files (candidate)
-  "Return t if CANDIDATE is either directory or an feature file."
-  (or (string-suffix-p ".feature" candidate)
+(defun easky--select-files (candidate ext)
+  "Return t if CANDIDATE is either directory or file with EXT."
+  (or (string-suffix-p ext candidate)
       (file-directory-p candidate)))
+
+(defun easky--select-org-files (candidate)
+  "Return t if CANDIDATE is either directory or an org file."
+  (easky--select-files candidate ".org"))
+
+(defun easky--select-feature-files (candidate)
+  "Return t if CANDIDATE is either directory or a feature file."
+  (easky--select-files candidate ".feature"))
 
 ;;;###autoload
 (defun easky-help ()
@@ -1415,18 +1423,6 @@ Argument DEST is the destination folder, default is set to `dist'."
       (easky--display (easky-command "lint" "indent" wildcards)))))
 
 ;;;###autoload
-(defun easky-lint-keywords ()
-  "Run keywords linter."
-  (interactive)
-  (easky--display (easky-command "lint" "keywords")))
-
-;;;###autoload
-(defun easky-lint-license ()
-  "Run license linter."
-  (interactive)
-  (easky--display (easky-command "lint" "license")))
-
-;;;###autoload
 (defun easky-lint-package ()
   "Run package-lint."
   (interactive)
@@ -1452,6 +1448,30 @@ Argument DEST is the destination folder, default is set to `dist'."
 
 ;;;###autoload
 (defalias 'easky-lint-relint #'easky-lint-regexps)
+
+;;;###autoload
+(defun easky-lint-keywords ()
+  "Run keywords linter."
+  (interactive)
+  (easky--display (easky-command "lint" "keywords")))
+
+;;;###autoload
+(defun easky-lint-license ()
+  "Run license linter."
+  (interactive)
+  (easky--display (easky-command "lint" "license")))
+
+;;;###autoload
+(defun easky-lint-org ()
+  "Run org-lint on Org files."
+  (interactive)
+  (easky--exec-with-files "Select `lint org' action: "
+    (easky--display (easky-command "lint" "org"))
+    (let ((file (read-file-name "Select file for `lint org': "
+                                nil nil t nil #'easky--select-org-files)))
+      (easky--display (easky-command "lint" "org" file)))
+    (let ((wildcards (read-string "Wildcards: ")))
+      (easky--display (easky-command "lint" "org" wildcards)))))
 
 ;;
 ;;; Testing
