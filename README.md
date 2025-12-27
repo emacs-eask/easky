@@ -254,7 +254,7 @@ Commands to help you lint your packages:
 | `easky-lint-license`       | Run license linter        |
 | `easky-lint-org`           | Run org-lint on Org files |
 
-> 💡 These extenral tools are automatically installed in your sandbox!
+> 💡 These external tools are automatically installed in your sandbox!
 
 ### 🔗 Linking
 

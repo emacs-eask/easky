@@ -655,6 +655,12 @@ Arguments FORM-1, FORM-2 and FORM-3 are execution by each file action."
   (easky--output-buffer (easky-command "locate")))
 
 ;;;###autoload
+(defun easky-root ()
+  "Print the package directory."
+  (interactive)
+  (easky--output-buffer (easky-command "root")))
+
+;;;###autoload
 (defun easky-compile ()
   "Byte-compile elc files."
   (interactive)
