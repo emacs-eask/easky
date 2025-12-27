@@ -1,7 +1,7 @@
 ;; -*- mode: eask; lexical-binding: t -*-
 
 (package "easky"
-         "0.1.0"
+         "0.2.0"
          "Control the Eask command-line interface")
 
 (website-url "https://github.com/emacs-eask/easky")
