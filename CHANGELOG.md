@@ -13,6 +13,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 * feat Add `recompile` ([`778d2c0`](../../commit/778d2c0ac495ec8336e068e992614b63e4e70556))
 * feat: Add `install-vc` and `install-file` commands ([`070c734`](../../commit/070c734bdc5fafdf0de060f9584b1a037681eac2))
 * feat Add `org-lint` support ([`8c9f234`](../../commit/8c9f23446e3e728fc9fb12e3cc02b9b67c1e837d))
+* feat Add `root` support ([`3bc561a`](../../commit/3bc561a8bf3aa23e0c60814e636bb59c2e1a45d6))
 
 ## 0.1.0
 > Released Oct 08, 2023
