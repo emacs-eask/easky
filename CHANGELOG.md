@@ -4,8 +4,13 @@ All notable changes to this project will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## 0.1.1 (Unreleased)
+## 0.3.0 (Unreleased)
 > Released N/A
+
+* N/A
+
+## 0.2.0
+> Released Dec 27, 2025
 
 * Makes `easky-init` convert directory names to Lisp package names ([#3](../../pull/3))
 * feat: Add test `ecukes` command ([#5](../../pull/5))

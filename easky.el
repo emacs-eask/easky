@@ -5,7 +5,7 @@
 ;; Author: Shen, Jen-Chieh <jcs090218@gmail.com>
 ;; Maintainer: Shen, Jen-Chieh <jcs090218@gmail.com>
 ;; URL: https://github.com/emacs-eask/easky
-;; Version: 0.1.0
+;; Version: 0.2.0
 ;; Package-Requires: ((emacs "27.1") (eask-mode "0.1.0") (eask "0.1.0") (ansi "0.4.1") (lv "0.0") (marquee-header "0.1.0"))
 ;; Keywords: maint easky
 
